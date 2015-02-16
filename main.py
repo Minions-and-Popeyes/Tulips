@@ -32,6 +32,7 @@ class Controller(object):
 			return "Login Successfully"
 		else:
 			return "Login Failed"
+<<<<<<< HEAD
 
 
 
@@ -44,6 +45,18 @@ class Controller(object):
 		together_date=be_together_date(cherrypy.session['user'])
 		return lovebook_view(data,together_date)
 
+=======
+	@cherrypy.expose
+	def submit_lovebook(self,content):
+		if not cherrypy.session['user']:
+			return "Not Login"
+		try:
+			bll.add_lovebookitem(cherrypy.session['user'],content)
+		except Exception as e:
+			return "add_lovebookitem error " + e.message
+		raise cherrypy.HTTPRedirect("/index")
+			
+>>>>>>> FETCH_HEAD
 	
 
 conf = {
