@@ -20,3 +20,27 @@ def login(person_email,person_password):
 	else: 
 		return False
 
+
+
+def lovebook(person1_email,year,month,day):
+	conn = mysql.connect(user='tulips',password='GottLoveFee',host='localhost',database='Tulips')
+	cur = conn.cursor()
+	id1=dal.person_id(cur,person1_email)
+	gender1=dal.person_gender(cur,person1_email)
+	couple_id=dal.couple(cur,id1,gender1)
+	id2=dal.peer(cur,gender1,couple_id)
+	begin_time = datetime.datetime(year,month,day,0,0,0)
+	stop_time = datetime.datetime(year,month,day,23,59,59)
+	return dal.lovebook_items(cur,id1,id2,begin_time,stop_time)
+
+
+def be_together_date(person_email):
+	conn = mysql.connect(user='tulips',password='GottLoveFee',host='localhost',database='Tulips')
+	cur = conn.cursor()
+	id1=dal.person_id(cur,person1_email)
+	gender1=dal.person_gender(cur,person1_email)
+	date=dal.couple_date(cur,id1,gender1)
+	return date
+
+
+

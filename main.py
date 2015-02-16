@@ -32,7 +32,18 @@ class Controller(object):
 			return "Login Successfully"
 		else:
 			return "Login Failed"
-			
+
+
+
+
+	@cherrypy.expose
+	def love_book(self,year,month,day):
+		if not cherrypy.session['user']:
+				return "Not Login"
+		data = bll.lovebook(cherrypy.session['user'],year,month,day)
+		together_date=be_together_date(cherrypy.session['user'])
+		return lovebook_view(data,together_date)
+
 	
 
 conf = {
