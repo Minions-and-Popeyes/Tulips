@@ -32,6 +32,15 @@ class Controller(object):
 			return "Login Successfully"
 		else:
 			return "Login Failed"
+	@cherrypy.expose
+	def submit_lovebook(self,content):
+		if not cherrypy.session['user']:
+			return "Not Login"
+		try:
+			bll.add_lovebookitem(cherrypy.session['user'],content)
+		except Exception as e:
+			return "add_lovebookitem error " + e.message
+		raise cherrypy.HTTPRedirect("/index")
 			
 	
 
