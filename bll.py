@@ -56,3 +56,23 @@ def be_together_date(person1_email):
 
 
 
+def inbox(email):
+	conn = getSQLConnection()
+	cur = conn.cursor()
+	timenow=datetime.datetime.now()
+	user_id=dal.person_id(cur,email)
+	return dal.inbox(user_id,timenow)
+
+
+def outbox(email):
+	conn = getSQLConnection()
+	cur = conn.cursor()
+	user_id=dal.person_id(cur,email)
+	return dal.outbox(user_id)
+
+
+
+
+
+
+

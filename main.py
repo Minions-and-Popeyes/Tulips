@@ -60,8 +60,31 @@ class Controller(object):
 		raise cherrypy.HTTPRedirect('/love_book_first?year={0}&month={1}&day={2}'.format(t.year,t.month,t.day))
 
 	@cherrypy.expose
-	def letters_records():
+	def letters_inbox(self):
+		if not cherrypy.session.has_key('user'):
+				return "Not Login"
+		data = bll.inbox(cherrypy.session['user'])
+		return letters_inbox_view(data)
+
+	@cherrypy.expose
+	def letters_outbox(self):
+		if not cherrypy.session.has_key('user'):
+				return "Not Login"
+		data = bll.outbox(cherrypy.session['user'])
+		return letters_outbox_view(data)
+
+
+
+	@cherrypy.expose
+	def letters_write(self):
+		if not cherrypy.session.has_key('user'):
+				return "Not Login"
 		
+
+
+
+
+
 
 
 
