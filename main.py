@@ -3,6 +3,9 @@ import cherrypy
 import bll
 import signup
 import login
+import string
+import lovebook
+import datetime
 
 class Controller(object):
 	@cherrypy.expose
@@ -35,14 +38,32 @@ class Controller(object):
 
 
 
+	@cherrypy.expose
+	def love_book_first(self,year,month,day):
+		if not cherrypy.session.has_key('user'):
+				return "Not Login"
+		year = string.atoi(year)
+		month = string.atoi(month)
+		day = string.atoi(day)
+		data = bll.lovebook(cherrypy.session['user'],year,month,day)
+		together_date=bll.be_together_date(cherrypy.session['user'])
+
+		# some other things
+		return lovebook.lovebook_view(data,together_date)
 
 	@cherrypy.expose
-	def love_book(self,year,month,day):
-		if not cherrypy.session['user']:
+	def love_book_second(self,new_content):
+		if not cherrypy.session.has_key('user'):
 				return "Not Login"
-		data = bll.lovebook(cherrypy.session['user'],year,month,day)
-		together_date=be_together_date(cherrypy.session['user'])
-		return lovebook_view(data,together_date)
+		bll.new_lovebook(new_content,cherrypy.session['user'])
+		t = datetime.datetime.now()
+		raise cherrypy.HTTPRedirect('/love_book_first?year={0}&month={1}&day={2}'.format(t.year,t.month,t.day))
+
+	@cherrypy.expose
+	def letters_records():
+		
+
+
 
 	
 

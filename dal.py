@@ -1,7 +1,7 @@
 import mysql.connector as mysql
 
-def add_user(cur,name,password,email):
-	cur.execute(" INSERT INTO user(name,email,password) values(%s,%s,%s) ", (name,email,password) )
+def add_user(cur,name,password,email,gender):
+	cur.execute(" INSERT INTO user(name,email,password,gender) values(%s,%s,%s,%s) ", (name,email,password,gender) )
 	cur.execute(" select last_insert_id()")
 	return cur.fetchall()[0][0]
 
@@ -28,11 +28,10 @@ def person_gender(cur,email):
 
 
 def couple(cur,person_id,person_gender):
-    if person_gender==1:
-    	cur.execute("SELECT id from couple WHERE boy=%s",(person_id,))
-    else:
+	if person_gender==1:
+		cur.execute("SELECT id from couple WHERE boy=%s",(person_id,))
+	else:
 		cur.execute("SELECT id from couple WHERE girl=%s",(person_id,))
-
 	return cur.fetchall()[0][0]
 
 
@@ -42,7 +41,6 @@ def couple_date(cur,person_id,person_gender):
 		cur.execute("SELECT date from couple WHERE boy=%s",(person_id,))
 	else:
 		cur.execute("SELECT date from couple WHERE girl=%s",(person_id,))
-
 	return cur.fetchall()[0][0]
 
 
@@ -52,13 +50,19 @@ def peer(cur,person_gender,couple_id):
 		cur.execute("SELECT girl from couple WHERE id=%s",(couple_id,))
 	else:
 		cur.execute("SELECT boy from couple WHERE id=%s",(couple_id,))
-
 	return cur.fetchall()[0][0]
 
 
 def lovebook_items(cur,id1,id2,begin_time,stop_time):
-	cur.execute("SELECT * from lovebook WHERE (user=%s or user=%s) and time>=begin_time and date<=stop_time  ORDER BY date desc",(id1,id2))
+	cur.execute("SELECT * from lovebook WHERE (user=%s or user=%s) and time>=%s and time<=%s  ORDER BY time desc",(id1,id2,begin_time,stop_time))
 	return cur.fetchall()
+
+
+def add_lovebook_items(cur,new_content,change_time,user_id):
+	cur.execute("INSERT INTO lovebook(content,time,user) values(%s,%s,%s)",(new_content,change_time,user_id))
+	cur.execute("SELECT last_insert_id()")
+	return cur.fetchall()[0][0]
+
 
 
 
