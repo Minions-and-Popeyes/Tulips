@@ -66,7 +66,7 @@ def add_lovebook_items(cur,new_content,change_time,user_id):
 
 
 def inbox(cur,user_id,timenow):
-	cur.execute("SELECT begin_time,end_time,content,is_read from letters WHERE (to=%s) and %s >= begin_time and %s <= end_time ORDER BY id desc",(user_id,timenow,timenow))
+	cur.execute("SELECT begin_time,end_time,content,is_read from letters WHERE (`to`=%s) and %s >= begin_time and %s <= end_time ORDER BY id desc",(user_id,timenow,timenow))
 	return cur.fetchall()
 
 
@@ -77,12 +77,13 @@ def letters_is_read(cur,letters_id):
 
 
 def outbox(cur,user_id):
-	cur.execute("SELECT * from letters WHERE (from=%s) ORDER BY id desc",(user_id,))
+	cur.execute("SELECT * from letters WHERE (`from`=%s) ORDER BY id desc",(user_id,))
 	return cur.fetchall()
 
 
-def letters_write(cur,user_id,begin_time,end_time,content):
-	cur.execute("INSERT INTO letters(begin_time,end_time,content,is_read,modified_time) values(%s,%s,%s,%s,%s)",())
+def letters_write(cur,user_id,peer_id,begin_time,end_time,content,change_time):
+	cur.execute("INSERT INTO letters(begin_time,end_time,content,is_read,modified_time,`from`,`to`) values(%s,%s,%s,%s,%s,%s,%s)",(begin_time,end_time,content,0,change_time,user_id,peer_id))
+	
 
 
 

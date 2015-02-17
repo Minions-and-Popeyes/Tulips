@@ -1,16 +1,14 @@
 #coding=utf-8
 import cherrypy
 import bll
-import signup
-import login
+import view
 import string
-import lovebook
 import datetime
 
 class Controller(object):
 	@cherrypy.expose
 	def signup_first(self):
-		return signup.signup_view()
+		return view.signup.signup_view()
 
 
 	@cherrypy.expose
@@ -25,7 +23,7 @@ class Controller(object):
 
 	@cherrypy.expose
 	def login_first(self):
-		return login.login_view()
+		return view.login_view()
 
 
 	@cherrypy.expose
@@ -49,7 +47,7 @@ class Controller(object):
 		together_date=bll.be_together_date(cherrypy.session['user'])
 
 		# some other things
-		return lovebook.lovebook_view(data,together_date)
+		return view.lovebook_view(data,together_date)
 
 	@cherrypy.expose
 	def love_book_second(self,new_content):
@@ -64,22 +62,36 @@ class Controller(object):
 		if not cherrypy.session.has_key('user'):
 				return "Not Login"
 		data = bll.inbox(cherrypy.session['user'])
-		return letters_inbox_view(data)
+		return view.letters_inbox_view(data)
 
 	@cherrypy.expose
 	def letters_outbox(self):
 		if not cherrypy.session.has_key('user'):
 				return "Not Login"
 		data = bll.outbox(cherrypy.session['user'])
-		return letters_outbox_view(data)
+		return view.letters_outbox_view(data)
 
 
 
 	@cherrypy.expose
-	def letters_write_first(self,begin_time,end_time):
+	def letters_write_first(self):
 		if not cherrypy.session.has_key('user'):
-				return "Not Login"
-		
+			return "Not Login"
+		return view.letters_write_view()
+
+
+	@cherrypy.expose
+	def letters_write_second(self,begin_time,end_time,new_letter):
+		if not cherrypy.session.has_key('user'):
+			return "Not Login"
+		begin = datetime.datetime.strptime(begin_time,'%Y-%m-%d %H:%M:%S')
+		end = datetime.datetime.strptime(end_time,'%Y-%m-%d %H:%M:%S')
+		bll.letters_write(cherrypy.session['user'],begin_time,end_time,new_letter)
+		raise cherrypy.HTTPRedirect('letters_outbox')
+
+
+
+
 
 
 

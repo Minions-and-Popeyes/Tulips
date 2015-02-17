@@ -61,14 +61,26 @@ def inbox(email):
 	cur = conn.cursor()
 	timenow=datetime.datetime.now()
 	user_id=dal.person_id(cur,email)
-	return dal.inbox(user_id,timenow)
+	return dal.inbox(cur,user_id,timenow)
 
 
 def outbox(email):
 	conn = getSQLConnection()
 	cur = conn.cursor()
 	user_id=dal.person_id(cur,email)
-	return dal.outbox(user_id)
+	return dal.outbox(cur,user_id)
+
+
+def letters_write(email,begin_time,end_time,content):
+	conn = getSQLConnection()
+	cur = conn.cursor()
+	user_id = dal.person_id(cur,email)
+	change_time = datetime.datetime.now()
+	person_gender = dal.person_gender(cur,email)
+	couple_id = dal.couple(cur,user_id,person_gender)
+	peer_id = dal.peer(cur,person_gender,couple_id)
+	dal.letters_write(cur,user_id,peer_id,begin_time,end_time,content,change_time)
+	conn.commit()
 
 
 

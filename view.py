@@ -55,7 +55,7 @@ def lovebook_view(data,together_date):
 			<input type="submit">
 		</form>
 
-		<textarea name="new_content" form="usrform"> A Book Only Belongs to Your Twos </textarea>
+		<textarea name="new_content" form="usrform" placeholder="A Book Only Belongs to Your Twos"></textarea>
 
 	</body></html>"""
 	return s
@@ -64,16 +64,16 @@ def lovebook_view(data,together_date):
 
 
 def letters_inbox_view(data):
-	s = """<html><body>
+	s = u"""<html><body>
 		"""
 
 	for a in data:
-		s += "<div>" + "可看的时间段为：" + str(a[0]) + " -- " +str(a[1])+ "</div>"
+		s += "<div>" + u"可看的时间段为：" + str(a[0]) + " -- " +str(a[1])+ "</div>"
 		s += "<div>" + str(a[2]) +"</div>"
 		if a[3]==0 :
-			s += "<div>" + "未读" +"</div>"
+			s += "<div>" + u"未读" +"</div>"
 		else:
-			s += "<div>" + "已读" +"</div>"
+			s += "<div>" + u"已读" +"</div>"
 
 
 	s+="""</body></html>
@@ -85,22 +85,37 @@ def letters_inbox_view(data):
 
 
 def letters_outbox_view(data):
-	s = """<html><body>
+	s = u"""<html><body>
 		"""
 
 	for a in data:
-		s += "<div>" + "可看的时间段为：" + str(a[1]) + " -- " +str(a[2])+ "</div>"
-		s += "<div>" + "修改时间为：" + str(a[6]) + "</div>"
+		s += "<div>" + u"可看的时间段为：" + str(a[1]) + " -- " +str(a[2])+ "</div>"
+		s += "<div>" + u"修改时间为：" + str(a[6]) + "</div>"
 		s += "<div>" + str(a[3]) +"</div>"
 		if a[7]==0 :
-			s += "<div>" + "对方还没有看" +"</div>"
+			s += "<div>" + u"对方还没有看" +"</div>"
 		else:
-			s += "<div>" + "对方已经看过啦  阅读时间为 ： " + str(a[8])+"</div>"
+			s += "<div>" + u"对方已经看过啦  阅读时间为 ： " + str(a[8])+"</div>"
 
 
 	s+="""</body></html>
 		"""
 	return s
+
+
+
+
+def letters_write_view():
+	return u"""<html><body>
+					<form action="/letters_write_second" method="post">
+						你可以在这里设置让TA看的时间哦
+						<input type="text" name=begin_time placeholder="起始时间"><br />
+						<input type="text" name=end_time placeholder="截止时间">
+						<input type="textarea" name=new_letter placeholder="给TA写点什么吧~">
+						<input type="submit" value="写完啦">
+					</form>
+				</body></html>
+			"""
 
 
 
