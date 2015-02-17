@@ -8,6 +8,10 @@ import lovebook
 import datetime
 
 class Controller(object):
+	@cherrypy.expose('/')
+	def index(self):
+		return index_view(datetime.datetime.now())
+
 	@cherrypy.expose
 	def signup_first(self):
 		return signup.signup_view()

@@ -103,9 +103,13 @@ def letters_outbox_view(data):
 	return s
 
 
-
-
-
+def index_view(now):
+	return u"""
+	<html><body>
+		<a href="/signup_first">注册</a>
+		<a href="/login_first">登陆</a>
+		<a href="/love_book_first?year={0}&month={1}&day={2}">Love Book</a>
+	</body></html>""".format(now.year,now.month,now.day)
 
 
 
