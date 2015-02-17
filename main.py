@@ -76,10 +76,11 @@ class Controller(object):
 
 
 	@cherrypy.expose
-	def letters_write(self):
+	def letters_write_first(self,begin_time,end_time):
 		if not cherrypy.session.has_key('user'):
 				return "Not Login"
 		
+
 
 
 
