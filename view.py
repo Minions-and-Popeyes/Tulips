@@ -47,16 +47,66 @@ def lovebook_view(data,together_date):
 	s+="<div>"+str(days)+"</div>"
 
 	for a in data:
-		s += "<div>"+str(a[3])+"</div>"
-		s += "<div>"+str(a[1])+"</div>"
-		s += "<div>"+str(a[2])+"</div>"
-	s+="""
-		<form action="/love_book_second" id="usrform">
-			<input type="submit">
-		</form>
+		s += "<div>"+str(a[3])+"</div><br />"
+		s += '<img src="'+str(a[1])+'" /><br />'
+		s += "<div>"+str(a[2])+"</div><br />"
+	s+=u"""
+			<canvas id="c" width="240" height="400" onmousedown="doMouseDown(event)" onmousemove="doMouseMove(event)" onmouseup="doMouseUp(event)" ></canvas>
+			<input type="button" onclick="submit()" value="写好啦" />
+			<script>
+			var started = false
+			var canvas = document.getElementById("c");  
+			var tempContext = canvas.getContext("2d");
 
-		<textarea name="new_content" form="usrform" placeholder="A Book Only Belongs to Your Twos"></textarea>
+			function getPointOnCanvas(canvas, x, y) {  
+			    var bbox = canvas.getBoundingClientRect();  
+			    return { x: x - bbox.left * (canvas.width  / bbox.width),  
+			            y: y - bbox.top  * (canvas.height / bbox.height)  
+			            };  
+			} 
+			function doMouseDown(event) {  
+			    var x = event.pageX;  
+			    var y = event.pageY;  
+			    var canvas = event.target;  
+			    var loc = getPointOnCanvas(canvas, x, y);  
+			    console.log("mouse down at point( x:" + loc.x + ", y:" + loc.y + ")");  
+			    tempContext.beginPath();  
+			    tempContext.moveTo(loc.x, loc.y);  
+			    started = true;  
+			}  
+			  
+			function doMouseMove(event) {  
+			    var x = event.pageX;  
+			    var y = event.pageY;  
+			    var canvas = event.target;  
+			    var loc = getPointOnCanvas(canvas, x, y);  
+			    if (started) {  
+			        tempContext.lineTo(loc.x, loc.y);  
+			        tempContext.stroke();  
+			    }  
+			}  
+			  
+			function doMouseUp(event) {  
+			    console.log("mouse up now");  
+			    if (started) {  
+			        doMouseMove(event);  
+			        started = false;  
+			    }  
+			}  
 
+			function submit() {
+				xmlhttp = new XMLHttpRequest()
+				xmlhttp.onreadystatechange = function () {
+					if(xmlhttp.readystate==4 && xmlhttp.status==200){
+						alter('添加Love Book成功')
+						location.reload()
+					}
+				}
+				xmlhttp.open("POST",'/love_book_second',true)
+				xmlhttp.setRequestHeader('Content-type','application/x-www-form-urlencoded')
+				xmlhttp.send('new_content='+encodeURIComponent(canvas.toDataURL()))
+			}
+		</script>
 	</body></html>"""
 	return s
 
@@ -103,16 +153,13 @@ def letters_outbox_view(data):
 	return s
 
 
-<<<<<<< HEAD
-
-
 def letters_write_view():
 	return u"""<html><body>
 					<form action="/letters_write_second" method="post">
 						你可以在这里设置让TA看的时间哦
-						<input type="text" name=begin_time placeholder="起始时间"><br />
-						<input type="text" name=end_time placeholder="截止时间">
-						<input type="textarea" name=new_letter placeholder="给TA写点什么吧~">
+						<input type="text" name="begin_time" placeholder="起始时间"><br />
+						<input type="text" name="end_time" placeholder="截止时间">
+						<input type="textarea" name="new_letter" placeholder="给TA写点什么吧~">
 						<input type="submit" value="写完啦">
 					</form>
 				</body></html>
@@ -120,17 +167,27 @@ def letters_write_view():
 
 
 
+def chat_view():
+	return u"""<html><body>
+					<form action="/chat_second" method="post">
+						<input type="text" name="chat_content" placeholder="和TA聊聊吧"><br/>
+						<input type="submit" value="发给TA">
+					</form>
+				</body></html>
+			"""
 
 
-=======
-def index_view(now):
-	return u"""
+def index_view(now,unread_count):
+	s = u"""
 	<html><body>
-		<a href="/signup_first">注册</a>
-		<a href="/login_first">登陆</a>
-		<a href="/love_book_first?year={0}&month={1}&day={2}">Love Book</a>
-	</body></html>""".format(now.year,now.month,now.day)
->>>>>>> FETCH_HEAD
+		<a href="/signup_first">注册</a><br />
+		<a href="/login_first">登陆</a><br />
+		<a href="/love_book_first?year={0}&month={1}&day={2}">Love Book</a><br />""".format(now.year,now.month,now.day)
+	if unread_count:
+		s+= u"<div> TA给你写了{0}封信，你还没有看喏</div>".format(unread_count)
+	s+="</body></html>"
+	return s
+
 
 
 

@@ -8,11 +8,17 @@ import datetime
 class Controller(object):
 	@cherrypy.expose('/')
 	def index(self):
-		return index_view(datetime.datetime.now())
+		unread_count = None
+		if cherrypy.session.has_key('user'):
+			unread_count = bll.unread_letters_count(cherrypy.session['user'])
+		return view.index_view(datetime.datetime.now(),unread_count)
+
+
+		
 
 	@cherrypy.expose
 	def signup_first(self):
-		return view.signup.signup_view()
+		return view.signup_view()
 
 
 	@cherrypy.expose
@@ -34,7 +40,7 @@ class Controller(object):
 	def login_second(self,person_email,person_password):		
 		if	bll.login(person_email,person_password):
 			cherrypy.session['user']=person_email
-			return "Login Successfully"
+			raise cherrypy.HTTPRedirect('/')
 		else:
 			return "Login Failed"
 
@@ -57,6 +63,7 @@ class Controller(object):
 	def love_book_second(self,new_content):
 		if not cherrypy.session.has_key('user'):
 				return "Not Login"
+		print new_content
 		bll.new_lovebook(new_content,cherrypy.session['user'])
 		t = datetime.datetime.now()
 		raise cherrypy.HTTPRedirect('/love_book_first?year={0}&month={1}&day={2}'.format(t.year,t.month,t.day))
@@ -93,6 +100,32 @@ class Controller(object):
 		bll.letters_write(cherrypy.session['user'],begin_time,end_time,new_letter)
 		raise cherrypy.HTTPRedirect('letters_outbox')
 
+
+
+
+	@cherrypy.expose
+	def chat_first(self):
+		if not cherrypy.session.has_key('user'):
+			return "Not Login"
+		data = bll.previous_chat()
+		return view.chat_view(data)
+
+
+
+
+	@cherrypy.expose
+	def chat_second(self,chat_content):
+		if not cherrypy.session.has_key('user'):
+			return "Not Login"
+		bll.new_chat(cherrypy.session['user'],chat_content)
+
+
+
+
+
+
+    
+		
 
 
 

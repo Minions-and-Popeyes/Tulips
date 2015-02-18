@@ -85,6 +85,40 @@ def letters_write(email,begin_time,end_time,content):
 
 
 
+def unread_letters_count(email):
+	conn = getSQLConnection()
+	cur = conn.cursor()
+	user_id = dal.person_id(cur,email)
+	return dal.unread_letters_count(cur,user_id)
+
+
+
+def new_chat(email,content):
+	conn = getSQLConnection()
+	cur = conn.cursor()
+	user_id = dal.person_id(cur,email)
+	time = datetime.datetime.now()
+	person_gender = dal.person_gender(cur,email)
+	couple_id = dal.couple(cur,user_id,person_gender)
+	peer_id = dal.peer(cur,person_gender,couple_id)
+	dal.new_chat(cur,user_id,peer_id,time,content)
+	conn.commit()
+
+
+def previous_chat(email):
+	conn = getSQLConnection()
+	cur = conn.cursor()
+	user_id = dal.person_id(cur,email)
+	person_gender = dal.person_gender(cur,email)
+	couple_id = dal.couple(cur,user_id,person_gender)
+	peer_id = dal.peer(cur,person_gender,couple_id)
+	dal.previous_chat()
+
+
+
+
+
+
 
 
 

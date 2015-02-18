@@ -83,6 +83,19 @@ def outbox(cur,user_id):
 
 def letters_write(cur,user_id,peer_id,begin_time,end_time,content,change_time):
 	cur.execute("INSERT INTO letters(begin_time,end_time,content,is_read,modified_time,`from`,`to`) values(%s,%s,%s,%s,%s,%s,%s)",(begin_time,end_time,content,0,change_time,user_id,peer_id))
+
+
+def unread_letters_count(cur,user_id):
+	cur.execute("SELECT count(*) from letters where `to`=%s and is_read=0",(user_id,))
+	return cur.fetchall()[0][0]
+
+
+def new_chat(cur,user_id,peer_id,time,content):
+	cur.execute("INSERT INTO chat (time,content,`from`,`to`) values(%s,%s,%s,%s)",(time,content,user_id,peer_id))
+
+
+def previous_chat_peer(cur,user_id,peer_id):
+	cur.execute("SELECT time,content from chat WHERE ()")
 	
 
 
