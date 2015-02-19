@@ -23,10 +23,10 @@ class Controller(object):
 
 	@cherrypy.expose
 	def signup_second(self,boy_name,boy_address,boy_password,girl_name,girl_address,girl_password):
- 		try:
-	 		bll.signup(boy_name,boy_address,boy_password,girl_name,girl_address,girl_password)
-	 	except Exception as e:
-	 		return "Signup Failed" + e.message
+ 		#try:
+	 	bll.signup(boy_name,boy_address,boy_password,girl_name,girl_address,girl_password)
+	 	#except Exception as e:
+	 	#	return "Signup Failed" + e.message
 	 	return "Signup Successfully"
 
 
@@ -104,13 +104,11 @@ class Controller(object):
 
 
 	@cherrypy.expose
-	def chat_first(self):
+	def chat_first(self,page=0):
 		if not cherrypy.session.has_key('user'):
 			return "Not Login"
-		data = bll.previous_chat(cherrypy.session['user'])
-		return view.chat_view(data,cherrypy.session['user'])
-
-
+		data = bll.previous_chat(cherrypy.session['user'],page*10,10)
+		return view.chat_view(data)
 
 
 	@cherrypy.expose
@@ -118,6 +116,7 @@ class Controller(object):
 		if not cherrypy.session.has_key('user'):
 			return "Not Login"
 		bll.new_chat(cherrypy.session['user'],chat_content)
+		raise cherrypy.HTTPRedirect('chat_first')
 
 
 

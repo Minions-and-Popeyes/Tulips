@@ -6,7 +6,7 @@ class love_book(object):
 		self.user = user
 
 	def save(self,cur):
-		if id:
+		if self.id:
 			cur.execute("UPDATE love_book SET content = %s, time = %s, user = %s where id = %s",(self.content,self.time,self.user,self.id))
 		else:
 			cur.execute("INSERT INTO love_book(content,time,user) VALUES(%s,%s,%s)",(self.content,self.time,self.user))

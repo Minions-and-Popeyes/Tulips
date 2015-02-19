@@ -94,8 +94,8 @@ def new_chat(cur,user_id,peer_id,time,content):
 	cur.execute("INSERT INTO chat (time,content,`from`,`to`) values(%s,%s,%s,%s)",(time,content,user_id,peer_id))
 
 
-def previous_chat(cur,peer_id,user_id):
-	cur.execute("SELECT id,time,content from chat WHERE `from`=%s or `from`=%s ORDER BY id desc",(peer_id,user_id))
+def previous_chat(cur,peer_id,user_id,skip,top):
+	cur.execute("SELECT id,time,content,`from`=%s from chat WHERE `from`=%s or `from`=%s ORDER BY id desc limit %s,%s",(user_id,peer_id,user_id,skip,top))
 	return cur.fetchall()
 
 

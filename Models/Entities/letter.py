@@ -10,7 +10,7 @@ class letter(object):
 		self.is_read = is_read
 		self.read_time = read_time
 	def save(self,cur):
-		if id:
+		if self.id:
 			cur.execute("UPDATE letters SET begin_time=%s, end_time=%s, content=%s,`from`=%s, `to`=%s, modified_time=%s, is_read=%s, read_time=%s",(self.begin_time,self.end_time,self.content,self.from,self.to,self.modified_time,self.is_read,self.read_time))
 		else:
 			cur.execute("INSERT INTO letters(begin_time,end_time,content,`from`,`to`,modified_time,is_read) values(%s,%s,%s,%s,%s,%s,0)",(self.begin_time,self.end_time,self.content,self.from,self.to,self.modified_time))

@@ -6,7 +6,7 @@ class user(object):
 		self.password = password
 		self.gender = gender
 	def save(self,cur):
-		if id:
+		if self.id:
 			cur.execute("UPDATE user SET name=%s, email=%s, password=%s, gender=%s where id=%s",(self.name,self.email,self.password,self.gender,self.id))
 		else:
 			cur.execute("INSERT INTO user(name,email,password,gender) VALUES(%s,%s,%s,%s)",(self.name,self.email,self.password,self.gender))

@@ -5,8 +5,8 @@ class couple(object):
 		self.girl = girl
 		self.date = date
 	def save(self,cur):
-		if id:
-			cur.execute("UPDATE couple SET boy=%s, girl=%s, date=%s where id=%s",(self.boy,self.girl,self.date))
+		if self.id:
+			cur.execute("UPDATE couple SET boy=%s, girl=%s, date=%s where id=%s",(self.boy,self.girl,self.date,self.id))
 		else:
 			cur.execute("INSERT INTO couple(boy,girl,date) VALUES(%s,%s,%s)",(self.boy,self.girl,self.date))
 			cur.execute("SELECT last_insert_id()")

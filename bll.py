@@ -1,6 +1,9 @@
 import mysql.connector as mysql
 import dal
 import datetime
+from Models.Entities.user import user
+from Models.Entities.couple import couple
+
 
 def getSQLConnection():
 	return mysql.connect(user='tulips',password='GottLoveFee',host='162.105.80.126',database='Tulips')
@@ -8,16 +11,18 @@ def getSQLConnection():
 def signup(boy_name,boy_address,boy_password,girl_name,girl_address,girl_password):
 	conn = getSQLConnection()
 	cur = conn.cursor()
-	boy = dal.add_user(cur,boy_name,boy_password,boy_address,1)
-	girl = dal.add_user(cur,girl_name,girl_password,girl_address,0)
-	dal.add_couple(cur,boy,girl,datetime.datetime.now())
+	boy = user(None,boy_name,boy_address,boy_password,1)
+	boy.save(cur)
+	girl = user(None,girl_name,girl_address,girl_password,0)
+	girl.save(cur)
+	c = couple(None, boy.id ,girl.id,datetime.datetime.now())
+	c.save(cur)
 	conn.commit()
 
 
 def login(person_email,person_password):
 	conn = getSQLConnection()
 	cur = conn.cursor()
-	print repr(person_password),"====",repr(str(dal.password(cur,person_email).decode('utf-8')))
 	if str(person_password)==str(dal.password(cur,person_email).decode('utf-8')):
 		return True
 	else: 
@@ -105,14 +110,14 @@ def new_chat(email,content):
 	conn.commit()
 
 
-def previous_chat(email):
+def previous_chat(email,skip,top):
 	conn = getSQLConnection()
 	cur = conn.cursor()
 	user_id = dal.person_id(cur,email)
 	person_gender = dal.person_gender(cur,email)
 	couple_id = dal.couple(cur,user_id,person_gender)
 	peer_id = dal.peer(cur,person_gender,couple_id)
-	return dal.previous_chat(peer_id,user_id)
+	return dal.previous_chat(cur,peer_id,user_id,skip,top)
 
 
 
