@@ -167,13 +167,26 @@ def letters_write_view():
 
 
 
-def chat_view():
-	return u"""<html><body>
-					<form action="/chat_second" method="post">
-						<input type="text" name="chat_content" placeholder="和TA聊聊吧"><br/>
-						<input type="submit" value="发给TA">
-					</form>
-				</body></html>
+def chat_view(data,user_id):
+	s = u"""<html><body>
+				<form action="/chat_second" method="post">
+					<input type="text" name="chat_content" placeholder="和TA聊聊吧"><br/>
+					<input type="submit" value="发给TA">
+				</form>
+				"""
+	latest_chat_id = data[0][0]
+	latest_chat_time = data[0][1]
+	last_latest_chat_time = data[1][1]
+	time_interval = data[0][1] - data[0][1]
+	for a in data:
+		if (latest_chat_id - a[0]) <= 10:
+			if time_interval >=1000*60:
+				s += "<div>" + a[1] +"</div>"
+			if user_id == 'from':
+				s += "<div>" + "ME" +a[2] +"</div>"
+			else:
+				s += "<div>" + "TA" +a[2] +"</div>"
+	s +="""</body></html>
 			"""
 
 

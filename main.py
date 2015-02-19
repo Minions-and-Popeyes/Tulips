@@ -107,8 +107,8 @@ class Controller(object):
 	def chat_first(self):
 		if not cherrypy.session.has_key('user'):
 			return "Not Login"
-		data = bll.previous_chat()
-		return view.chat_view(data)
+		data = bll.previous_chat(cherrypy.session['user'])
+		return view.chat_view(data,cherrypy.session['user'])
 
 
 

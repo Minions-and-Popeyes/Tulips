@@ -94,13 +94,13 @@ def new_chat(cur,user_id,peer_id,time,content):
 	cur.execute("INSERT INTO chat (time,content,`from`,`to`) values(%s,%s,%s,%s)",(time,content,user_id,peer_id))
 
 
-def previous_chat_peer(cur,user_id,peer_id):
-	cur.execute("SELECT time,content from chat WHERE `from`")
+def previous_chat(cur,peer_id,user_id):
+	cur.execute("SELECT id,time,content from chat WHERE `from`=%s or `from`=%s ORDER BY id desc",(peer_id,user_id))
+	return cur.fetchall()
 
 
-def previous_chat_me(cur,user_id,peer_id):
-	cur.execute("SELECT time,content from chat WHERE ()")
-	
+
+
 
 
 

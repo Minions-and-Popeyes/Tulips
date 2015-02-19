@@ -112,7 +112,12 @@ def previous_chat(email):
 	person_gender = dal.person_gender(cur,email)
 	couple_id = dal.couple(cur,user_id,person_gender)
 	peer_id = dal.peer(cur,person_gender,couple_id)
-	dal.previous_chat()
+	return dal.previous_chat(peer_id,user_id)
+
+
+
+
+
 
 
 
