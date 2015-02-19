@@ -95,6 +95,10 @@ def new_chat(cur,user_id,peer_id,time,content):
 
 
 def previous_chat_peer(cur,user_id,peer_id):
+	cur.execute("SELECT time,content from chat WHERE `from`")
+
+
+def previous_chat_me(cur,user_id,peer_id):
 	cur.execute("SELECT time,content from chat WHERE ()")
 	
 

@@ -3,7 +3,7 @@ import dal
 import datetime
 
 def getSQLConnection():
-	return mysql.connect(user='tulips',password='GottLoveFee',host='localhost',database='Tulips')
+	return mysql.connect(user='tulips',password='GottLoveFee',host='162.105.80.126',database='Tulips')
 
 def signup(boy_name,boy_address,boy_password,girl_name,girl_address,girl_password):
 	conn = getSQLConnection()
