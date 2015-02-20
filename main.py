@@ -5,6 +5,40 @@ import view
 import string
 import datetime
 
+class DBTool(cherrypy.Tool):
+	def __init__(self):
+		cherrypy.Tool.__init__(self,'on_start_resource',self.bind,priority=20)
+	def _setup(self):
+		cherrypy.Tool._setup(self)
+		cherrypy.request.hooks.attach('on_end_resource',self.commit,priority=20)
+	def bind(self):
+		conn = mysql.connect(user='tulips',password='GottLoveFee',host='162.105.80.126',database='Tulips',pool_name='pool')
+		cur = conn.cursor()
+		req = cherrypy.request
+		req.conn = conn
+		req.cur = cur
+	def commit(self):
+		try:
+			cherrypy.request.conn.commit()
+		except:
+			cherrypy.request.conn.rollback()
+			raise
+		finally:
+			cherrypy.request.cur.close()
+			cherrypy.request.conn.close()
+
+def Auth(path):
+	if hasattr(cherrypy.request.cookie,email):
+		u = user.byemail(email)
+		if u:
+			cherrypy.request.user = u
+			return
+	raise cherrypy.HTTPRedirect('/login_first?redirect='+path)
+
+cherrypy.tools.db = DBTool()
+cherrypy.tools.require_auth = Auth
+
+
 class Controller(object):
 	@cherrypy.expose('/')
 	def index(self):
@@ -12,9 +46,6 @@ class Controller(object):
 		if cherrypy.session.has_key('user'):
 			unread_count = bll.unread_letters_count(cherrypy.session['user'])
 		return view.index_view(datetime.datetime.now(),unread_count)
-
-
-		
 
 	@cherrypy.expose
 	def signup_first(self):
@@ -141,7 +172,8 @@ class Controller(object):
 
 conf = {
 	'/': {
-		'tools.sessions.on': True
+		'tools.sessions.on': True,
+		'tools.db.on': True
 	}
 }
 cherrypy.quickstart(Controller(),'/',conf)
