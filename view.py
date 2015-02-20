@@ -21,18 +21,22 @@ def signup_view():
 
 
 
-def login_view():
-	return u"""<html>
-			  <body>
+def login_view(failed,redirect):
+	s = u"""<html>
+			  <body>"""
+	if failed:
+		s+=u"<p> 登陆失败，用户名或密码不正确 </p>"
+	s+=u"""
 			  <form action="/login_second" method="post">
 			  	<input type=text name="person_email"  placeholder="邮箱"/>
-			  	<input type=password name="person_password" placeholder="密码">
-
-			  	<input type=submit value="登陆">
+			  	<input type=password name="person_password" placeholder="密码">"""
+	s+=u'<input type="hidden" name="redirect" value={0} />'.format(redirect)
+	s+=u"""<input type=submit value="登陆">
 			  </form>
 			  </body>
 				</html>
 	"""
+	return s
 
 
 
@@ -188,18 +192,20 @@ def chat_view(data):
 	return s
 
 
-def index_view(now,unread_count):
+def index_view(now,unread_count,login):
 	s = u"""
 	<html><body>
-		<a href="/signup_first">注册</a><br />
-		<a href="/login_first">登陆</a><br />
-		<a href="/love_book_first?year={0}&month={1}&day={2}">Love Book</a><br />""".format(now.year,now.month,now.day)
+		<a href="/signup_first">注册</a><br />"""
+	if login:
+		s+=u'<a href="/logout">登出</a><br />'
+	else:
+		s+=u'<a href="/login_first">登陆</a><br />'
+	s+="""<a href="/love_book_first?year={0}&month={1}&day={2}">Love Book</a><br />""".format(now.year,now.month,now.day)
 	if unread_count:
 		s+= u"<div> TA给你写了{0}封信，你还没有看喏</div>".format(unread_count)
-	s+="</body></html>"
+	s+=u"""<a href="/letters_inbox">收件箱</a><br />
+			<a href="/letters_outbox">发件箱</a><br />
+			<a href="/chat_first">聊天</a><br />
+			<a href="/letters_write_first">写信</a><br />
+		</body></html>"""
 	return s
-
-
-
-
-

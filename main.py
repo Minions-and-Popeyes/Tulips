@@ -4,6 +4,8 @@ import bll
 import view
 import string
 import datetime
+import mysql.connector as mysql
+from Models.Entities.user import user
 
 class DBTool(cherrypy.Tool):
 	def __init__(self):
@@ -14,9 +16,8 @@ class DBTool(cherrypy.Tool):
 	def bind(self):
 		conn = mysql.connect(user='tulips',password='GottLoveFee',host='162.105.80.126',database='Tulips',pool_name='pool')
 		cur = conn.cursor()
-		req = cherrypy.request
-		req.conn = conn
-		req.cur = cur
+		cherrypy.request.conn = conn
+		cherrypy.request.cur = cur
 	def commit(self):
 		try:
 			cherrypy.request.conn.commit()
@@ -24,28 +25,37 @@ class DBTool(cherrypy.Tool):
 			cherrypy.request.conn.rollback()
 			raise
 		finally:
-			cherrypy.request.cur.close()
 			cherrypy.request.conn.close()
 
-def Auth(path):
-	if hasattr(cherrypy.request.cookie,email):
-		u = user.byemail(email)
+def Auth(path=None):
+	if cherrypy.request.cookie.has_key('email'):
+		u = user.byemail(cherrypy.request.cookie['email'].value)
 		if u:
 			cherrypy.request.user = u
 			return
-	raise cherrypy.HTTPRedirect('/login_first?redirect='+path)
+	if path:
+		raise cherrypy.HTTPRedirect('/login_first?redirect='+path)
 
 cherrypy.tools.db = DBTool()
-cherrypy.tools.require_auth = Auth
+cherrypy.tools.auth = cherrypy.Tool('on_start_resource',Auth,priority=30)
 
 
 class Controller(object):
 	@cherrypy.expose('/')
+	@cherrypy.tools.auth()
 	def index(self):
 		unread_count = None
-		if cherrypy.session.has_key('user'):
-			unread_count = bll.unread_letters_count(cherrypy.session['user'])
-		return view.index_view(datetime.datetime.now(),unread_count)
+		login = False
+		if hasattr(cherrypy.request,'user'):
+			unread_count = bll.unread_letters_count(cherrypy.request.user)
+			login = True
+		return view.index_view(datetime.datetime.now(),unread_count,login)
+
+	@cherrypy.expose
+	def logout(self):
+		cherrypy.response.cookie['email']=''
+		cherrypy.response.cookie['email']['max-age']=0
+		raise cherrypy.HTTPRedirect('/')
 
 	@cherrypy.expose
 	def signup_first(self):
@@ -54,121 +64,83 @@ class Controller(object):
 
 	@cherrypy.expose
 	def signup_second(self,boy_name,boy_address,boy_password,girl_name,girl_address,girl_password):
- 		#try:
 	 	bll.signup(boy_name,boy_address,boy_password,girl_name,girl_address,girl_password)
-	 	#except Exception as e:
-	 	#	return "Signup Failed" + e.message
-	 	return "Signup Successfully"
+	 	raise cherrypy.HTTPRedirect('/login_first')
 
 
 
 	@cherrypy.expose
-	def login_first(self):
-		return view.login_view()
+	def login_first(self,failed=0,redirect='/'):
+		return view.login_view(failed,redirect)
 
 
 	@cherrypy.expose
-	def login_second(self,person_email,person_password):		
+	def login_second(self,person_email,person_password,redirect):		
 		if	bll.login(person_email,person_password):
-			cherrypy.session['user']=person_email
-			raise cherrypy.HTTPRedirect('/')
-		else:
-			return "Login Failed"
-
-
+			cherrypy.response.cookie['email']=person_email
+			raise cherrypy.HTTPRedirect(redirect)
+		raise cherrypy.HTTPRedirect('/login_first?failed=1&redirect='+redirect)
 
 	@cherrypy.expose
-	def love_book_first(self,year,month,day):
-		if not cherrypy.session.has_key('user'):
-				return "Not Login"
-		year = string.atoi(year)
-		month = string.atoi(month)
-		day = string.atoi(day)
-		data = bll.lovebook(cherrypy.session['user'],year,month,day)
-		together_date=bll.be_together_date(cherrypy.session['user'])
-
-		# some other things
+	@cherrypy.tools.auth(path='/love_book_first')
+	def love_book_first(self,year=None,month=None,day=None):
+		if year and month and day:
+			year = string.atoi(year)
+			month = string.atoi(month)
+			day = string.atoi(day)
+		else:
+			now = datetime.datetime.now()
+			year = now.year
+			month = now.month
+			day = now.day
+		data = bll.lovebook_items(cherrypy.request.user,year,month,day)
+		together_date=bll.be_together_date(cherrypy.request.user)
 		return view.lovebook_view(data,together_date)
 
 	@cherrypy.expose
+	@cherrypy.tools.auth(path='/')
 	def love_book_second(self,new_content):
-		if not cherrypy.session.has_key('user'):
-				return "Not Login"
-		print new_content
-		bll.new_lovebook(new_content,cherrypy.session['user'])
+		bll.new_lovebook(new_content,cherrypy.request.user)
 		t = datetime.datetime.now()
-		raise cherrypy.HTTPRedirect('/love_book_first?year={0}&month={1}&day={2}'.format(t.year,t.month,t.day))
 
 	@cherrypy.expose
+	@cherrypy.tools.auth(path='/letters_inbox')
 	def letters_inbox(self):
-		if not cherrypy.session.has_key('user'):
-				return "Not Login"
-		data = bll.inbox(cherrypy.session['user'])
+		data = bll.inbox(cherrypy.request.user)
 		return view.letters_inbox_view(data)
 
 	@cherrypy.expose
+	@cherrypy.tools.auth(path='/letters_outbox')
 	def letters_outbox(self):
-		if not cherrypy.session.has_key('user'):
-				return "Not Login"
-		data = bll.outbox(cherrypy.session['user'])
+		data = bll.outbox(cherrypy.request.user)
 		return view.letters_outbox_view(data)
 
-
-
 	@cherrypy.expose
+	@cherrypy.tools.auth(path='/letters_write_first')
 	def letters_write_first(self):
-		if not cherrypy.session.has_key('user'):
-			return "Not Login"
 		return view.letters_write_view()
 
 
 	@cherrypy.expose
+	@cherrypy.tools.auth(path='/')
 	def letters_write_second(self,begin_time,end_time,new_letter):
-		if not cherrypy.session.has_key('user'):
-			return "Not Login"
 		begin = datetime.datetime.strptime(begin_time,'%Y-%m-%d %H:%M:%S')
 		end = datetime.datetime.strptime(end_time,'%Y-%m-%d %H:%M:%S')
-		bll.letters_write(cherrypy.session['user'],begin_time,end_time,new_letter)
-		raise cherrypy.HTTPRedirect('letters_outbox')
-
-
-
+		bll.letters_write(cherrypy.request.user,begin_time,end_time,new_letter)
+		raise cherrypy.HTTPRedirect('/letters_outbox')
 
 	@cherrypy.expose
+	@cherrypy.tools.auth(path='/chat_first')
 	def chat_first(self,page=0):
-		if not cherrypy.session.has_key('user'):
-			return "Not Login"
-		data = bll.previous_chat(cherrypy.session['user'],page*10,10)
+		data = bll.previous_chat(cherrypy.request.user,page*10,10)
 		return view.chat_view(data)
 
 
 	@cherrypy.expose
+	@cherrypy.tools.auth(path='/')
 	def chat_second(self,chat_content):
-		if not cherrypy.session.has_key('user'):
-			return "Not Login"
-		bll.new_chat(cherrypy.session['user'],chat_content)
-		raise cherrypy.HTTPRedirect('chat_first')
-
-
-
-
-
-
-    
-		
-
-
-
-
-
-
-
-
-
-
-
-
-	
+		bll.new_chat(cherrypy.request.user,chat_content)
+		raise cherrypy.HTTPRedirect('/chat_first')
 
 conf = {
 	'/': {
