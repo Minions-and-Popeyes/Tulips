@@ -230,11 +230,14 @@ def calendar_view(year,month):
 	<th>六</th>
 	<th>日</th>
 	</tr>
+
+
 	"""
 
 	now = datetime.datetime.now(year,month,1)
 	flag = true
 	for i in range (5):
+		s += <tr>
 		for j in range (7):
 			if j==first.isoweekday() and flag:
 				s += "<td>"+now.day+"</td>"
@@ -243,6 +246,7 @@ def calendar_view(year,month):
 			if now.month != month:
 				flag = false
 			now += datetime.timedelta(1)
+		s += </tr>
 
 
 
