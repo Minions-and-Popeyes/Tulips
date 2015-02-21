@@ -5,6 +5,15 @@ import view
 import string
 import datetime
 
+
+class DBTool(cherrypy.Tool):
+	def __init__(self):
+		cherrypy.Tool.__init__(self,'on_start_resource',self.bind,priority=20)
+
+	def _setup(self):
+		cherrypy.Tool._setup(self,'on_end_resource',self)
+	def bind(self):
+
 class Controller(object):
 	@cherrypy.expose('/')
 	def index(self):
@@ -117,6 +126,23 @@ class Controller(object):
 			return "Not Login"
 		bll.new_chat(cherrypy.session['user'],chat_content)
 		raise cherrypy.HTTPRedirect('chat_first')
+
+
+	@cherrypy.expose
+	def calendar_first(self):
+		if not cherrypy.session.has_key('user'):
+			return "Not Login"
+		return view.calendar_view()
+
+
+
+	@cherrypy.expose
+	def calendar_second(self):
+		if not cherrypy.session.has_key('user'):
+			return "Not Login"
+
+		
+
 
 
 

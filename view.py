@@ -188,6 +188,75 @@ def chat_view(data):
 	return s
 
 
+
+
+
+def calendar_view(year,month):
+	s = u"""<html>
+		<head>
+		<style type="text/css">
+		#calender{
+			font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+  			width:100%;
+  			border-collapse:collapse;
+  		}
+
+  		#calender td,#calendar th{
+  		    font-size:1em;
+		    border:1px solid #98bf21;
+		    padding:3px 7px 2px 7px;
+		}
+
+		#calender th{
+			font-size:1.1em;
+			text-align:left;
+			padding-top:5px;
+			padding-bottom:4px;
+		}
+		
+
+		}
+		</style>
+
+	</head>
+	<body>
+	<table id="calender">
+	<tr>
+	<th>一</th>
+	<th>二</th>
+	<th>三</th>
+	<th>四</th>
+	<th>五</th>
+	<th>六</th>
+	<th>日</th>
+	</tr>
+	"""
+
+	now = datetime.datetime.now(year,month,1)
+	flag = true
+	for i in range (5):
+		for j in range (7):
+			if j==first.isoweekday() and flag:
+				s += "<td>"+now.day+"</td>"
+			else:
+				s +="<td>"+"</td>"
+			if now.month != month:
+				flag = false
+			now += datetime.timedelta(1)
+
+
+
+
+
+
+
+	s +="""</table>
+	</body></html>
+	"""
+
+
+
+
 def index_view(now,unread_count):
 	s = u"""
 	<html><body>
