@@ -174,6 +174,22 @@ class Controller(object):
 		raise cherrypy.HTTPRedirect('/calendar_first')
 
 
+
+	@cherrypy.expose
+	@cherrypy.tools.auth(path='/gifts_first')
+	def gifts_first(self):
+		data = bll.
+		return view.gifts_chain(data)
+
+
+
+
+
+	@cherrypy.expose
+	@cherrypy.tools.auth(path='/')
+	def gifts_second(self)
+
+
 conf = {
 	'/': {
 		'tools.sessions.on': True,

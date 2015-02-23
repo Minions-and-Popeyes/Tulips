@@ -300,6 +300,33 @@ def calendar_view(data,data_couple,year,month):
 
 
 
+
+def view.gifts_chain(data):
+	s = u"""
+		  <html><body>
+		  <form action="/gifts_second" method="post" enctype="multipart/form-data">
+		  filename: <input type="file" name="myFile"/><br/>
+		  <input type="textarea" name="description"/>
+
+		  <input type="text" name="year" placeholder="2015"/>年
+		  <input type="text" name="month" placeholder="2"/>月
+		  <input type="text" name="day" placeholder="14"/>日<br/>
+		  
+		  TA送我的<input type="radio" name="who" value="TA"/><br/>
+		  我送TA的<input type="radio" name="who" value="ME"/><br/>
+		     
+          <input type="submit"/>
+            
+		  </form>
+
+	"""
+	s += u"""
+	      </body></html>
+	"""
+
+
+
+
 def index_view(now,unread_count,login):
 	s = u"""
 	<html><body>
