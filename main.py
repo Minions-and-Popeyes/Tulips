@@ -48,8 +48,9 @@ class Controller(object):
 		login = False
 		if hasattr(cherrypy.request,'user'):
 			unread_count = bll.unread_letters_count(cherrypy.request.user)
+			be_together_days = bll.be_together_days(cherrypy.request.user)
 			login = True
-		return view.index_view(datetime.datetime.now(),unread_count,login)
+		return view.index_view(datetime.datetime.now(),unread_count,login,be_together_days)
 
 	@cherrypy.expose
 	def logout(self):
