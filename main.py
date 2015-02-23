@@ -40,11 +40,6 @@ def Auth(path=None):
 cherrypy.tools.db = DBTool()
 cherrypy.tools.auth = cherrypy.Tool('on_start_resource',Auth,priority=30)
 
-<<<<<<< HEAD
-
-
-=======
->>>>>>> origin/master
 class Controller(object):
 	@cherrypy.expose('/')
 	@cherrypy.tools.auth()
@@ -178,49 +173,6 @@ class Controller(object):
 		bll.new_affair(cherrypy.request.user,begin_time,end_time,affair,0)
 		raise cherrypy.HTTPRedirect('/calendar_first')
 
-		
-
-		
-
-
-
-
-
-
-
-    
-		
-
-
-
-
-
-
-
-
-
-
-
-
-		bll.new_chat(cherrypy.request.user,chat_content)
-		raise cherrypy.HTTPRedirect('/chat_first')
-
-
-	@cherrypy.expose
-	def calendar_first(self):
-		if not cherrypy.session.has_key('user'):
-			return "Not Login"
-		now = datetime.datetime.now()
-		year = now.year
-		month = now.month
-		return view.calendar_view(year,month)
-
-
-
-	@cherrypy.expose
-	def calendar_second(self):
-		if not cherrypy.session.has_key('user'):
-			return "Not Login"
 
 conf = {
 	'/': {
