@@ -6,6 +6,7 @@ from Models.Entities.couple import couple
 from Models.Entities.lovebook import lovebook
 from Models.Entities.chat import chat
 from Models.Entities.letter import letter
+from Models.Entities.calendar import calendar
 
 def signup(boy_name,boy_address,boy_password,girl_name,girl_address,girl_password):
 	boy = user(None,boy_name,boy_address,boy_password,1)
@@ -82,6 +83,39 @@ def previous_chat(u,skip,top):
 	else:
 		peer = c.boy
 	return dal.previous_chat(peer,u.id,skip,top)
+
+
+
+def new_affair(u,begin_time,end_time,affair,is_whole_day):
+	ca = calendar(None,u.id,begin_time,end_time,affair,is_whole_day)
+	ca.save()
+
+
+def previous_affairs(u,year,month):
+	c = couple.byuserid(u.id)
+	if c.boy==u.id:
+		peer = c.girl
+	else:
+		peer = c.boy
+	st = datetime.datetime(year,month,1,0,0,0)
+	if month == 12:
+		ed = datetime.datetime(year+1,1,1,0,0,0)
+	else:
+		ed = datetime.datetime(year,month+1,1,0,0,0)
+	return dal.affairs_in_range(u.id,peer,st,ed)
+
+
+def the_day_affair(u,date):
+	c = couple.byuserid(u.id)
+	if c.boy==u.id:
+		peer = c.girl
+	else:
+		peer = c.boy
+	ed = date + datetime.timedelta(1)
+	return dal.affairs_in_range(u.id,peer,date,ed)
+
+
+
 
 
 

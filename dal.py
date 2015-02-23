@@ -30,3 +30,10 @@ def previous_chat(peer_id,user_id,skip,top):
 	cur = cherrypy.request.cur
 	cur.execute("SELECT id,time,content,`from`=%s from chat WHERE `from`=%s or `from`=%s ORDER BY id desc limit %s,%s",(user_id,peer_id,user_id,skip,top))
 	return cur.fetchall()
+
+
+def affairs_in_range(user_id,peer,begin_time,end_time):
+	cur = cherrypy.request.cur
+	cur.execute("select * from calendar where (user=%s or user=%s)and begin_time>=%s and begin_time<%s",(user_id,peer,begin_time,end_time))
+	return cur.fetchall()
+

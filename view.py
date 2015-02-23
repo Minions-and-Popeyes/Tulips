@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import datetime
 def signup_view():
 	return u"""<html>
 				<body>
@@ -21,18 +22,22 @@ def signup_view():
 
 
 
-def login_view():
-	return u"""<html>
-			  <body>
+def login_view(failed,redirect):
+	s = u"""<html>
+			  <body>"""
+	if failed:
+		s+=u"<p> 登陆失败，用户名或密码不正确 </p>"
+	s+=u"""
 			  <form action="/login_second" method="post">
 			  	<input type=text name="person_email"  placeholder="邮箱"/>
-			  	<input type=password name="person_password" placeholder="密码">
-
-			  	<input type=submit value="登陆">
+			  	<input type=password name="person_password" placeholder="密码">"""
+	s+=u'<input type="hidden" name="redirect" value={0} />'.format(redirect)
+	s+=u"""<input type=submit value="登陆">
 			  </form>
 			  </body>
 				</html>
 	"""
+	return s
 
 
 
@@ -191,36 +196,64 @@ def chat_view(data):
 
 
 
-def calendar_view(year,month):
+def calendar_view(data,data_couple,year,month):
 	s = u"""<html>
 		<head>
 		<style type="text/css">
-		#calender{
+		#calendar{
 			font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
   			width:100%;
   			border-collapse:collapse;
   		}
 
-  		#calender td,#calendar th{
+  		#calendar td,#calendar th{
   		    font-size:1em;
-		    border:1px solid #98bf21;
-		    padding:3px 7px 2px 7px;
+  		    border-style: solid;
+		    border-width:1px;
+		    padding:50px 7px 2px 7px;
 		}
 
-		#calender th{
+		#calendar th{
 			font-size:1.1em;
 			text-align:left;
 			padding-top:5px;
 			padding-bottom:4px;
 		}
+		</style>
 		
 
-		}
-		</style>
+
+
+		<script>
+			function foo1(year,month,day){
+				x = new XMLHttpRequest()
+				x.open('GET','/calendar_the_day_affair?year='+year+'&month='+month+'&day='+day,true)
+				x.onreadystatechange = function(){
+					if(x.readyState==4 && x.status==200){
+						y = document.getElementById('pop')
+						document.getElementById('content').innerHTML =x.responseText
+						document.getElementById('st').setAttribute('value',''+year+'-'+month+'-'+day+' 08:00:00')
+						document.getElementById('ed').setAttribute('value',''+year+'-'+month+'-'+day+' 10:00:00')
+						y.hidden = false
+					}
+				}
+				x.send()
+			}
+		</script>
+
+		<div id="pop" hidden="true" style="position:absolute;width:30%; height:30%; top:20%; left:35%; background:cyan" onclick="document.getElementById('pop').hidden=false">
+			<div id="content"></div>
+			<form action="/calendar_second" method="post">
+			起始时间<input id='st' type ="text" name = "begin_time"/><br/>
+			结束时间<input id='ed' type ="text" name = "end_time"/><br/>
+			事件<input type ="text" name = "affair"><br/>
+			<input type ="submit" value ="完成">
+			</form>
+		</div>
 
 	</head>
 	<body>
-	<table id="calender">
+	<table id="calendar" >
 	<tr>
 	<th>一</th>
 	<th>二</th>
@@ -234,44 +267,56 @@ def calendar_view(year,month):
 
 	"""
 
-	now = datetime.datetime.now(year,month,1)
-	flag = true
+
+	dict = {}
+	for a in data:
+		dict[a[2].day] = (a[5],a[1])
+	now = datetime.datetime(year,month,1)
+	flag = True
 	for i in range (5):
-		s += <tr>
+		s += "<tr>"
+		print now.weekday()
 		for j in range (7):
-			if j==first.isoweekday() and flag:
-				s += "<td>"+now.day+"</td>"
+			print j
+			if j==now.weekday() and flag:
+				print 'asdf'
+				if dict.has_key(now.day):
+					if dict[now.day][1]==data_couple.boy:
+						s += "<td onclick=\"foo1({0},{1},{2})\">{2}<br/><div style=\"background:blue\">{3}</div></td>".format(now.year,now.month,now.day,dict[now.day][0])
+					else:
+						s += "<td onclick=\"foo1({0},{1},{2})\">{2}<br/><div style=\"background:pink\">{3}</div></td>".format(now.year,now.month,now.day,dict[now.day][0])
+				else:
+					s+="<td onclick=\"foo1({0},{1},{2})\">{2}</td>".format(now.year,now.month,now.day)
+				now += datetime.timedelta(1)
 			else:
 				s +="<td>"+"</td>"
 			if now.month != month:
-				flag = false
-			now += datetime.timedelta(1)
-		s += </tr>
-
-
-
-
-
-
-
+				flag = False
+		s += "</tr>"
 	s +="""</table>
 	</body></html>
 	"""
-
-
-
-
-def index_view(now,unread_count):
-	s = u"""
-	<html><body>
-		<a href="/signup_first">注册</a><br />
-		<a href="/login_first">登陆</a><br />
-		<a href="/love_book_first?year={0}&month={1}&day={2}">Love Book</a><br />""".format(now.year,now.month,now.day)
-	if unread_count:
-		s+= u"<div> TA给你写了{0}封信，你还没有看喏</div>".format(unread_count)
-	s+="</body></html>"
 	return s
 
+
+
+def index_view(now,unread_count,login):
+	s = u"""
+	<html><body>
+		<a href="/signup_first">注册</a><br />"""
+	if login:
+		s+=u'<a href="/logout">登出</a><br />'
+	else:
+		s+=u'<a href="/login_first">登陆</a><br />'
+	s+="""<a href="/love_book_first?year={0}&month={1}&day={2}">Love Book</a><br />""".format(now.year,now.month,now.day)
+	if unread_count:
+		s+= u"<div> TA给你写了{0}封信，你还没有看喏</div>".format(unread_count)
+	s+=u"""<a href="/letters_inbox">收件箱</a><br />
+			<a href="/letters_outbox">发件箱</a><br />
+			<a href="/chat_first">聊天</a><br />
+			<a href="/letters_write_first">写信</a><br />
+		</body></html>"""
+	return s
 
 
 

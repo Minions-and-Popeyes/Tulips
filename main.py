@@ -6,6 +6,7 @@ import string
 import datetime
 import mysql.connector as mysql
 from Models.Entities.user import user
+from Models.Entities.couple import couple
 
 class DBTool(cherrypy.Tool):
 	def __init__(self):
@@ -40,14 +41,6 @@ cherrypy.tools.db = DBTool()
 cherrypy.tools.auth = cherrypy.Tool('on_start_resource',Auth,priority=30)
 
 
-
-class DBTool(cherrypy.Tool):
-	def __init__(self):
-		cherrypy.Tool.__init__(self,'on_start_resource',self.bind,priority=20)
-
-	def _setup(self):
-		cherrypy.Tool._setup(self,'on_end_resource',self)
-	def bind(self):
 
 class Controller(object):
 	@cherrypy.expose('/')
@@ -148,27 +141,41 @@ class Controller(object):
 	@cherrypy.expose
 	@cherrypy.tools.auth(path='/')
 	def chat_second(self,chat_content):
-		if not cherrypy.session.has_key('user'):
-			return "Not Login"
-		bll.new_chat(cherrypy.session['user'],chat_content)
+		bll.new_chat(cherrypy.request.user,chat_content)
 		raise cherrypy.HTTPRedirect('chat_first')
 
 
 	@cherrypy.expose
+	@cherrypy.tools.auth(path='/calendar_first')
 	def calendar_first(self):
-		if not cherrypy.session.has_key('user'):
-			return "Not Login"
 		now = datetime.datetime.now()
 		year = now.year
 		month = now.month
-		return view.calendar_view(year,month)
+		data = bll.previous_affairs(cherrypy.request.user,year,month)
+		data_couple = couple.byuserid(cherrypy.request.user.id)
+		return view.calendar_view(data,data_couple,year,month)
+
+
+	@cherrypy.expose
+	@cherrypy.tools.auth(path='/calendar_the_day_affair')
+	def calendar_the_day_affair(self,year,month,day):
+		date = datetime.datetime(int(year),int(month),int(day),0,0,0)
+		s = ''
+		for item in bll.the_day_affair(cherrypy.request.user,date):
+			s +='from {0} to {1} do {2}'.format(item[2],item[3],item[5])
+		return s
 
 
 
 	@cherrypy.expose
-	def calendar_second(self):
-		if not cherrypy.session.has_key('user'):
-			return "Not Login"
+	@cherrypy.tools.auth(path='/')
+	def calendar_second(self,begin_time,end_time,affair):
+		begin = datetime.datetime.strptime(begin_time,"%Y-%m-%d %H:%M:%S")
+		ed = datetime.datetime.strptime(end_time,"%Y-%m-%d %H:%M:%S")
+		bll.new_affair(cherrypy.request.user,begin_time,end_time,affair,0)
+		raise cherrypy.HTTPRedirect('/calendar_first')
+
+		
 
 		
 
