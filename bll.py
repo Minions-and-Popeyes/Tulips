@@ -118,18 +118,15 @@ def be_together_days(u):
 	c = couple.byuserid(u.id)
 	return datetime.datetime.now()-c.date
 
-def uploadImage(u,file):
-	data = myFile.file.read()
-	p = photo(None,data,u.id)
-	p.save()
-	return p.id
 
 def image(u,photo_id):
 	p = photo.byid(photo_id)
-	if p.user != u.id:
+	c = couple.byuserid(u.id)
+	if p and p.user != c.boy and p.user!=c.girl:
 		p = None
 	return p
-
+def new_gift(a,b,c,d,file):
+	pid = dal.upload_image(file)
 
 
 

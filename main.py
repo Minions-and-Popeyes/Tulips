@@ -185,10 +185,16 @@ class Controller(object):
 
 
 
+	@cherrypy.expose
+	@cherrypy.tools.auth(path='/')
+	def gifts_second(self):
 
 	@cherrypy.expose
 	@cherrypy.tools.auth(path='/')
-	def gifts_second(self)
+	def photo(self,id):
+		content = bll.image(cherrypy.request.user,id)
+		cherrypy.response.headers['Content-Type']='image/png'
+		return content
 
 
 conf = {
