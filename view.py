@@ -300,6 +300,7 @@ def calendar_view(data,data_couple,year,month):
 
 
 
+<<<<<<< HEAD
 
 def view.gifts_chain(data):
 	s = u"""
@@ -328,11 +329,15 @@ def view.gifts_chain(data):
 
 
 def index_view(now,unread_count,login):
+=======
+def index_view(now,unread_count,login,days):
+>>>>>>> origin/master
 	s = u"""
 	<html><body>
 		<a href="/signup_first">注册</a><br />"""
 	if login:
 		s+=u'<a href="/logout">登出</a><br />'
+		s+=u'<p>今天是我们在一起的第{0}天</p>'.format(int(math.ceil(days.total_seconds() /3600 / 24)))
 	else:
 		s+=u'<a href="/login_first">登陆</a><br />'
 	s+="""<a href="/love_book_first?year={0}&month={1}&day={2}">Love Book</a><br />""".format(now.year,now.month,now.day)

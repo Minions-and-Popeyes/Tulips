@@ -114,6 +114,21 @@ def the_day_affair(u,date):
 	ed = date + datetime.timedelta(1)
 	return dal.affairs_in_range(u.id,peer,date,ed)
 
+def be_together_days(u):
+	c = couple.byuserid(u.id)
+	return datetime.datetime.now()-c.date
+
+def uploadImage(u,file):
+	data = myFile.file.read()
+	p = photo(None,data,u.id)
+	p.save()
+	return p.id
+
+def image(u,photo_id):
+	p = photo.byid(photo_id)
+	if p.user != u.id:
+		p = None
+	return p
 
 
 
