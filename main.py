@@ -8,6 +8,7 @@ import mysql.connector as mysql
 from Models.Entities.user import user
 from Models.Entities.couple import couple
 
+
 class DBTool(cherrypy.Tool):
 	def __init__(self):
 		cherrypy.Tool.__init__(self,'on_start_resource',self.bind,priority=20)
@@ -179,15 +180,22 @@ class Controller(object):
 	@cherrypy.expose
 	@cherrypy.tools.auth(path='/gifts_first')
 	def gifts_first(self):
-		data = bll.
-		return view.gifts_chain(data)
+		data = bll.previous_gifts(cherrypy.request.user)
+		return view.gifts_chain_view(data)
 
 
 
 
 	@cherrypy.expose
 	@cherrypy.tools.auth(path='/')
-	def gifts_second(self):
+	def gifts_second(self,myFile,description,year,month,day,who):
+		date = datetime.datetime(int(year),int(month),int(day))
+		bll.new_gift(cherrypy.request.user,myFile,description,date,who)
+		raise cherrypy.HTTPRedirect('/gifts_first')
+
+
+
+
 
 	@cherrypy.expose
 	@cherrypy.tools.auth(path='/')
@@ -195,6 +203,30 @@ class Controller(object):
 		content = bll.image(cherrypy.request.user,id)
 		cherrypy.response.headers['Content-Type']='image/png'
 		return content
+
+
+
+	@cherrypy.expose
+	@cherrypy.tools.auth(path='diary')
+	def diary_first(self):
+		return view.diary_view()
+
+
+
+	@cherrypy.expose
+	@cherrypy.tools.auth(path='/')
+	def diary_second(self,year=None,month=None,day=None,content,permission):
+		if year and month and day:
+			year = string.atoi(year)
+			month = string.atoi(month)
+			day = string.atoi(day)
+		else:
+			now = datetime.datetime.now()
+			year = now.year
+			month = now.month
+			day = now.day
+		time = datetime.datetime(int(year),int(month),int(day))
+		bll.new_diary(cherrypy.request.user,time,content,permission)
 
 
 conf = {

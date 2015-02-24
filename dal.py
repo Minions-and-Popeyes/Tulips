@@ -34,12 +34,27 @@ def previous_chat(peer_id,user_id,skip,top):
 
 def affairs_in_range(user_id,peer,begin_time,end_time):
 	cur = cherrypy.request.cur
-	cur.execute("select * from calendar where (user=%s or user=%s)and begin_time>=%s and begin_time<%s",(user_id,peer,begin_time,end_time))
+	cur.execute("SELECT * from calendar WHERE (user=%s or user=%s)and begin_time>=%s and begin_time<%s",(user_id,peer,begin_time,end_time))
 	return cur.fetchall()
 
-def uploadImage(u,photo):
+def uploadImage(u,photo_file):
 	data = photo.file.read()
 	p = photo(None,data,u.id)
 	p.save()
 	return p.id
+
+
+def previous_gifts(user_id):
+	cur = cherrypy.request.cur
+	cur.execute("SELECT user.gender,gifts.* from gifts left join user on user.id=gifts.to WHERE frm=%s or `to`=%s ORDER BY `date` desc",(user_id,user_id))
+	return cur.fetchall()
+
+	
+
+
+
+
+
+
+
 

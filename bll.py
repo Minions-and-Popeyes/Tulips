@@ -7,6 +7,7 @@ from Models.Entities.lovebook import lovebook
 from Models.Entities.chat import chat
 from Models.Entities.letter import letter
 from Models.Entities.calendar import calendar
+from Models.Entities.gifts import gifts
 
 def signup(boy_name,boy_address,boy_password,girl_name,girl_address,girl_password):
 	boy = user(None,boy_name,boy_address,boy_password,1)
@@ -125,8 +126,46 @@ def image(u,photo_id):
 	if p and p.user != c.boy and p.user!=c.girl:
 		p = None
 	return p
-def new_gift(a,b,c,d,file):
-	pid = dal.upload_image(file)
+
+
+def new_gift(u,myFile,description,date,who):
+	pid = dal.uploadImage(u,myFile)
+	c = couple.byuserid(u.id)
+	if c.boy==u.id:
+		peer = c.girl
+	else:
+		peer = c.boy
+	if who==TA:
+		g = gifts(None,pid,description,peer,u.id,date)
+	else:
+		g = gifts(None,pid,description,u.id,peer,date)
+	g.save()
+
+
+
+def previous_gifts(u):
+	return dal.previous_gifts(u.id)
+
+
+
+def new_diary(u,time,content,permission):
+	if permission==None:
+		d = diary(None,time,content,u.id,0)
+	else:
+		d = diary(None,time,content,u.id,1)
+	d.save()
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
