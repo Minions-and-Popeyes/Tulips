@@ -298,11 +298,7 @@ def calendar_view(data,data_couple,year,month):
 	"""
 	return s
 
-
-
-<<<<<<< HEAD
-
-def view.gifts_chain(data):
+def gifts_chain(data):
 	s = u"""
 		  <html><body>
 		  <form action="/gifts_second" method="post" enctype="multipart/form-data">
@@ -324,14 +320,10 @@ def view.gifts_chain(data):
 	s += u"""
 	      </body></html>
 	"""
+	return s
 
 
-
-
-def index_view(now,unread_count,login):
-=======
 def index_view(now,unread_count,login,days):
->>>>>>> origin/master
 	s = u"""
 	<html><body>
 		<a href="/signup_first">注册</a><br />"""

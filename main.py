@@ -1,12 +1,14 @@
 #coding=utf-8
 import cherrypy
 import bll
+import dal
 import view
 import string
 import datetime
 import mysql.connector as mysql
 from Models.Entities.user import user
 from Models.Entities.couple import couple
+from Models.Entities.photo import photo
 
 class DBTool(cherrypy.Tool):
 	def __init__(self):
@@ -179,7 +181,7 @@ class Controller(object):
 	@cherrypy.expose
 	@cherrypy.tools.auth(path='/gifts_first')
 	def gifts_first(self):
-		data = bll.
+#		data = bll.
 		return view.gifts_chain(data)
 
 
@@ -188,13 +190,34 @@ class Controller(object):
 	@cherrypy.expose
 	@cherrypy.tools.auth(path='/')
 	def gifts_second(self):
-
+		pass
+	
+	@cherrypy.expose
+	@cherrypy.tools.auth(path='/')
+	def testupload(self):
+		return """
+        <html><body>
+            <h2>Upload a file</h2>
+            <form action="/upload_photo" method="post" enctype="multipart/form-data">
+            filename: <input type="file" name="photo" /><br />
+            <input type="submit" />
+            </form>
+            <h2>Download a file</h2>
+            <a href='download'>This one</a>
+        </body></html>
+        """
 	@cherrypy.expose
 	@cherrypy.tools.auth(path='/')
 	def photo(self,id):
-		content = bll.image(cherrypy.request.user,id)
+		content = bll.image_string_content(cherrypy.request.user,id)
 		cherrypy.response.headers['Content-Type']='image/png'
 		return content
+
+	@cherrypy.expose
+	@cherrypy.tools.auth(path='/')
+	def upload_photo(self,photo):
+		i = dal.uploadImage(cherrypy.request.user,photo)
+		raise cherrypy.HTTPRedirect('/photo?id={0}'.format(i))
 
 
 conf = {
