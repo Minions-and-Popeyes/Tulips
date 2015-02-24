@@ -1,4 +1,7 @@
 import cherrypy
+from PIL import Image
+from StringIO import StringIO
+from Models.Entities.photo import photo
 
 def lovebook_items(id1,id2,begin_time,stop_time):
 	cur = cherrypy.request.cur
@@ -38,8 +41,15 @@ def affairs_in_range(user_id,peer,begin_time,end_time):
 	return cur.fetchall()
 
 def uploadImage(u,photo_file):
+<<<<<<< HEAD
 	data = photo.file.read()
 	p = photo(None,data,u.id)
+=======
+	im = Image.open(photo_file.file)
+	buf = StringIO()
+	im.save(buf,'PNG')
+	p = photo(None,buf.getvalue(),u.id)
+>>>>>>> origin/master
 	p.save()
 	return p.id
 

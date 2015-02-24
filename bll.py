@@ -7,7 +7,13 @@ from Models.Entities.lovebook import lovebook
 from Models.Entities.chat import chat
 from Models.Entities.letter import letter
 from Models.Entities.calendar import calendar
+<<<<<<< HEAD
 from Models.Entities.gifts import gifts
+=======
+from Models.Entities.photo import photo
+from PIL import Image
+from StringIO import StringIO
+>>>>>>> origin/master
 
 def signup(boy_name,boy_address,boy_password,girl_name,girl_address,girl_password):
 	boy = user(None,boy_name,boy_address,boy_password,1)
@@ -120,11 +126,12 @@ def be_together_days(u):
 	return datetime.datetime.now()-c.date
 
 
-def image(u,photo_id):
+def image_string_content(u,photo_id,width=None,height=None):
 	p = photo.byid(photo_id)
 	c = couple.byuserid(u.id)
 	if p and p.user != c.boy and p.user!=c.girl:
 		p = None
+<<<<<<< HEAD
 	return p
 
 
@@ -166,6 +173,17 @@ def new_diary(u,time,content,permission):
 
 
 
+=======
+	if p and height and width:
+		im = Image.open(StringIO(p.content))
+		im = im.resize((width,height))
+		newcontent = StringIO()
+		im.save(newcontent,'PNG')
+		p.content = newcontent.getvalue()
+	return str(p.content)
+def new_gift(a,b,c,d,file):
+	pid = dal.upload_image(file)
+>>>>>>> origin/master
 
 
 

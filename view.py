@@ -298,9 +298,13 @@ def calendar_view(data,data_couple,year,month):
 	"""
 	return s
 
+<<<<<<< HEAD
 
 
 def gifts_chain_view(data):
+=======
+def gifts_chain(data):
+>>>>>>> origin/master
 	s = u"""
 		<html><body>
 		<div onclick="document.getElementById('new_gift').hidden=false" style="position:absolute;left:45%;">添加礼物</div>
@@ -343,6 +347,7 @@ def gifts_chain_view(data):
 	      </body></html>
 	"""
 	return s
+<<<<<<< HEAD
 
 
 
@@ -375,6 +380,10 @@ def diary_view():
 
 
 
+=======
+
+
+>>>>>>> origin/master
 def index_view(now,unread_count,login,days):
 	s = u"""
 	<html><body>
