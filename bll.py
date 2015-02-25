@@ -7,13 +7,12 @@ from Models.Entities.lovebook import lovebook
 from Models.Entities.chat import chat
 from Models.Entities.letter import letter
 from Models.Entities.calendar import calendar
-<<<<<<< HEAD
 from Models.Entities.gifts import gifts
-=======
 from Models.Entities.photo import photo
+from Models.Entities.diary import diary 
 from PIL import Image
 from StringIO import StringIO
->>>>>>> origin/master
+
 
 def signup(boy_name,boy_address,boy_password,girl_name,girl_address,girl_password):
 	boy = user(None,boy_name,boy_address,boy_password,1)
@@ -126,15 +125,6 @@ def be_together_days(u):
 	return datetime.datetime.now()-c.date
 
 
-def image_string_content(u,photo_id,width=None,height=None):
-	p = photo.byid(photo_id)
-	c = couple.byuserid(u.id)
-	if p and p.user != c.boy and p.user!=c.girl:
-		p = None
-<<<<<<< HEAD
-	return p
-
-
 def new_gift(u,myFile,description,date,who):
 	pid = dal.uploadImage(u,myFile)
 	c = couple.byuserid(u.id)
@@ -157,13 +147,23 @@ def previous_gifts(u):
 
 def new_diary(u,time,content,permission):
 	if permission==None:
-		d = diary(None,time,content,u.id,0)
-	else:
 		d = diary(None,time,content,u.id,1)
+	else:
+		d = diary(None,time,content,u.id,0)
 	d.save()
 
 
 
+def previous_diary_peer(u):
+	c = couple.byuserid(u.id)
+	if c.boy==u.id:
+		peer = c.girl
+	else:
+		peer = c.boy
+	return dal.previous_diary_peer(peer)
+
+def previous_diary_me(u):
+	return dal.previous_diary_me(u.id)
 
 
 
@@ -172,8 +172,11 @@ def new_diary(u,time,content,permission):
 
 
 
-
-=======
+def image_string_content(u,photo_id,width=None,height=None):
+	p = photo.byid(photo_id)
+	c = couple.byuserid(u.id)
+	if p and p.user != c.boy and p.user!=c.girl:
+		p = None
 	if p and height and width:
 		im = Image.open(StringIO(p.content))
 		im = im.resize((width,height))
@@ -181,9 +184,10 @@ def new_diary(u,time,content,permission):
 		im.save(newcontent,'PNG')
 		p.content = newcontent.getvalue()
 	return str(p.content)
+
 def new_gift(a,b,c,d,file):
 	pid = dal.upload_image(file)
->>>>>>> origin/master
+
 
 
 

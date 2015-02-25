@@ -162,9 +162,9 @@ def letters_write_view():
 	return u"""<html><body>
 					<form action="/letters_write_second" method="post">
 						你可以在这里设置让TA看的时间哦
-						<input type="text" name="begin_time" placeholder="起始时间"><br />
+						<input type="text" name="begin_time" placeholder="起始时间"><br/>
 						<input type="text" name="end_time" placeholder="截止时间">
-						<input type="textarea" name="new_letter" placeholder="给TA写点什么吧~">
+						<textarea name="new_letter" placeholder="给TA写点什么吧~"><textarea><br/>
 						<input type="submit" value="写完啦">
 					</form>
 				</body></html>
@@ -298,13 +298,10 @@ def calendar_view(data,data_couple,year,month):
 	"""
 	return s
 
-<<<<<<< HEAD
 
 
-def gifts_chain_view(data):
-=======
 def gifts_chain(data):
->>>>>>> origin/master
+
 	s = u"""
 		<html><body>
 		<div onclick="document.getElementById('new_gift').hidden=false" style="position:absolute;left:45%;">添加礼物</div>
@@ -329,15 +326,15 @@ def gifts_chain(data):
 	boy ="<div style=\"position:absolute;left:10%\">"
 	girl ="<div style=\"position:absolute;left:80%\">"
 	time_line ="<div style=\"position:absolute;left:50%\">"
-	for s in data:
-		time_line += "<div>"+s[6]+"</div>"
-		if s[0] == 1:
-			boy += "<div>"+"<img src=\"photos?id={0}\"/>".format(s[2])
-			boy += "<div>"+s[3]+"</div>"
+	for a in data:
+		time_line += "<div>"+a[6]+"</div>"
+		if a[0] == 1:
+			boy += "<div>"+"<img src=\"photos?id={0}\"/>".format(a[2])
+			boy += "<div>"+a[3]+"</div>"
 			boy += "</div>"
 		else:
-			girl += "<div>"+"<img src=\"photos?id={0}\"/>".format(s[2])
-			girl += "<div>"+s[3]+"</div>"
+			girl += "<div>"+"<img src=\"photos?id={0}\"/>".format(a[2])
+			girl += "<div>"+a[3]+"</div>"
 			girl += "</div>"
 	boy += "</div>"
 	girl += "</div>"
@@ -347,7 +344,6 @@ def gifts_chain(data):
 	      </body></html>
 	"""
 	return s
-<<<<<<< HEAD
 
 
 
@@ -359,20 +355,55 @@ def diary_view():
 	day = now.day
 	s =u"""
 	<html><body>
-	<div>
-		<form>
+	<a href="/diary_previous_peer" style="position:absolute;top:10%" value="TA的日记" ></a>
+	<a href="/diary_previous_me" style="position:absolute;top:10%" value="以前的日记"/></a>
+	<div style="position:absolute;left:30%">
+		<form action="diary_second" method="post">
 			<input name="year" type="text" placeholder="{0}">
 			<input name="month" type="text" placeholder="{1}">
-			<input name="day" type="text" placeholder="{2}">
+			<input name="day" type="text" placeholder="{2}"><br/>
 
-			<input name="content" type="textarea" style="width:500px;height:500px"/>
-			<input name="permission" type="checkbox" value="True">
+			<textarea name="content" style="width:500px;height:500px"></textarea><br/>
+			
+			TA不可以看<input name="permission" type="checkbox" value="False">
+			<input type="submit" value="写好了">
 		</form>
 	</div>
 
 	""".format(year,month,day)
-
 	s += """</body></html>"""
+	return s
+
+
+def previous_diary_peer(data):
+	s ="""
+	<html><body>
+	"""
+	for a in data:
+		s += "<div>"+str(a[0])+"</div>"
+		s += "<div>"+a[1]+"</div>"
+	s +="""
+	</body></html>
+	"""
+	return s
+
+
+
+def previous_diary_me(data):
+	s ="""
+	<html><body>
+	"""
+	for a in data:
+		s += "<div>"+str(a[0])+"</div>"
+		s += "<div>"+a[1]+"</div>"
+		if a[2]==1:
+			s += "<div>"+u"TA可以看"+"</div>"
+		else:
+			s += "<div>"+u"私密日记"+"</div>"
+	s +="""
+	</body></html>
+	"""
+	return s
 
 
 
@@ -380,10 +411,10 @@ def diary_view():
 
 
 
-=======
 
 
->>>>>>> origin/master
+
+
 def index_view(now,unread_count,login,days):
 	s = u"""
 	<html><body>

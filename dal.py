@@ -41,15 +41,10 @@ def affairs_in_range(user_id,peer,begin_time,end_time):
 	return cur.fetchall()
 
 def uploadImage(u,photo_file):
-<<<<<<< HEAD
-	data = photo.file.read()
-	p = photo(None,data,u.id)
-=======
 	im = Image.open(photo_file.file)
 	buf = StringIO()
 	im.save(buf,'PNG')
 	p = photo(None,buf.getvalue(),u.id)
->>>>>>> origin/master
 	p.save()
 	return p.id
 
@@ -57,6 +52,17 @@ def uploadImage(u,photo_file):
 def previous_gifts(user_id):
 	cur = cherrypy.request.cur
 	cur.execute("SELECT user.gender,gifts.* from gifts left join user on user.id=gifts.to WHERE frm=%s or `to`=%s ORDER BY `date` desc",(user_id,user_id))
+	return cur.fetchall()
+
+
+def previous_diary_peer(peer_id):
+	cur = cherrypy.request.cur
+	cur.execute("SELECT time,content from diary WHERE user=%s and permission=%s ORDER BY time desc",(peer_id,1))
+	return cur.fetchall()
+
+def previous_diary_me(user_id):
+	cur = cherrypy.request.cur
+	cur.execute("SELECT time,content,permission from diary WHERE user=%s",(user_id,))
 	return cur.fetchall()
 
 	
