@@ -16,7 +16,7 @@ class chat(object):
 	@staticmethod
 	def byid(cur,id):
 		cur = cherrypy.request.cur
-		cur.execute("SELECT id,time,content,from,to FROM chat where id = %s",(id,))
+		cur.execute("SELECT id,time,content,`from`,`to` FROM chat where id = %s",(self.id,))
 		res = cur.fetchall()
 		if res:
 			return chat(*res[0])

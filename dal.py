@@ -75,7 +75,11 @@ def previous_diary_me(user_id):
 	cur.execute("SELECT time,content,permission from diary WHERE user=%s",(user_id,))
 	return cur.fetchall()
 
-	
+def couple_links_id(id1,id2,skip,top):
+	cur = cherrypy.request.cur
+	cur.execute("SELECT id from link where user=%s or user=%s ORDER BY time desc limit %s,%s",(id1,id2,skip,top))
+	return [item[0] for item in cur.fetchall()]
+
 
 
 

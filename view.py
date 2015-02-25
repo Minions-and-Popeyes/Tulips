@@ -447,6 +447,24 @@ def index_view(now,unread_count,login,days):
 		</body></html>"""
 	return s
 
+def links(data,tags):
+	s = u"""<html><body>"""
+	for item in data:
+		s+=u'<div><a href="{0}">{1}</a>标签：'.format(item.link,item.desc)
+		for tag in item.tags:
+			s+=tags[tag].tag+" &nbsp; &nbsp; "
+		s+='</div>'
+	s+="""
+		<form action="/add_link" method="post" >
+			link:<input type="text" name="link" /><br />
+			desc:<input type="text" name="desc" /><br />"""
+	for tid,tag in tags.iteritems():
+		s+=u'{0}<input type="checkbox" name="tags" value="{1}"/> &nbsp; '.format(tag.tag,tid)
+	s+="""<input type="submit" />
+		</form>
+	</body></html>"""
+	return s
+
 
 
 

@@ -9,7 +9,8 @@ from Models.Entities.letter import letter
 from Models.Entities.calendar import calendar
 from Models.Entities.gifts import gifts
 from Models.Entities.photo import photo
-from Models.Entities.diary import diary 
+from Models.Entities.diary import diary
+from Models.Entities.link import link
 from PIL import Image
 from StringIO import StringIO
 
@@ -170,12 +171,6 @@ def previous_diary_me(u):
 	return dal.previous_diary_me(u.id)
 
 
-
-
-
-
-
-
 def image_string_content(u,photo_id,width=None,height=None):
 	p = photo.byid(photo_id)
 	c = couple.byuserid(u.id)
@@ -189,15 +184,11 @@ def image_string_content(u,photo_id,width=None,height=None):
 		p.content = newcontent.getvalue()
 	return str(p.content)
 
+def links(u,skip,top):
+	c = couple.byuserid(u.id)
+	ids = dal.couple_links_id(c.boy,c.girl,skip,top)
+	return [link.byid(id) for id in ids]
 
-
-
-
-
-
-
-
-
-
-
-
+def add_link(u,lnk,desc,tags):
+	l = link(None,lnk,u.id,desc,datetime.datetime.now(),tags)
+	l.save()

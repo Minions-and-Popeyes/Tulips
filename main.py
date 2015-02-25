@@ -9,6 +9,8 @@ import mysql.connector as mysql
 from Models.Entities.user import user
 from Models.Entities.couple import couple
 from Models.Entities.photo import photo
+from Models.Entities.tag import tag
+from Models.Entities.link import link
 
 
 class DBTool(cherrypy.Tool):
@@ -274,6 +276,19 @@ class Controller(object):
 	def diary_previous_me(self):
 		data = bll.previous_diary_me(cherrypy.request.user)
 		return view.previous_diary_me(data)
+
+	@cherrypy.expose
+	@cherrypy.tools.auth(path='/links')
+	def links(self,page=0):
+		data = bll.links(cherrypy.request.user,page*10,10)
+		tags = tag.all_tags()
+		return view.links(data,tags)
+
+	@cherrypy.expose
+	@cherrypy.tools.auth(path='/')
+	def add_link(self,link,desc,tags):
+		bll.add_link(cherrypy.request.user,link,desc,map(int,tags))
+		raise cherrypy.HTTPRedirect('/links')
 
 
 import os
