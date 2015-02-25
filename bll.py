@@ -7,15 +7,20 @@ from Models.Entities.lovebook import lovebook
 from Models.Entities.chat import chat
 from Models.Entities.letter import letter
 from Models.Entities.calendar import calendar
+from Models.Entities.gifts import gifts
 from Models.Entities.photo import photo
+from Models.Entities.diary import diary 
 from PIL import Image
 from StringIO import StringIO
 
 
+<<<<<<< HEAD
 def photos(u,skip,top):
 	c = couple.byuserid(u.id)
 	return dal.couple_photos_id(c.boy,c.girl,skip,top)
 	
+=======
+>>>>>>> origin/master
 def signup(boy_name,boy_address,boy_password,girl_name,girl_address,girl_password):
 	boy = user(None,boy_name,boy_address,boy_password,1)
 	boy.save()
@@ -127,6 +132,53 @@ def be_together_days(u):
 	return datetime.datetime.now()-c.date
 
 
+def new_gift(u,myFile,description,date,who):
+	pid = dal.uploadImage(u,myFile)
+	c = couple.byuserid(u.id)
+	if c.boy==u.id:
+		peer = c.girl
+	else:
+		peer = c.boy
+	if who==TA:
+		g = gifts(None,pid,description,peer,u.id,date)
+	else:
+		g = gifts(None,pid,description,u.id,peer,date)
+	g.save()
+
+
+
+def previous_gifts(u):
+	return dal.previous_gifts(u.id)
+
+
+
+def new_diary(u,time,content,permission):
+	if permission==None:
+		d = diary(None,time,content,u.id,1)
+	else:
+		d = diary(None,time,content,u.id,0)
+	d.save()
+
+
+
+def previous_diary_peer(u):
+	c = couple.byuserid(u.id)
+	if c.boy==u.id:
+		peer = c.girl
+	else:
+		peer = c.boy
+	return dal.previous_diary_peer(peer)
+
+def previous_diary_me(u):
+	return dal.previous_diary_me(u.id)
+
+
+
+
+
+
+
+
 def image_string_content(u,photo_id,width=None,height=None):
 	p = photo.byid(photo_id)
 	c = couple.byuserid(u.id)
@@ -139,8 +191,10 @@ def image_string_content(u,photo_id,width=None,height=None):
 		im.save(newcontent,'PNG')
 		p.content = newcontent.getvalue()
 	return str(p.content)
+
 def new_gift(a,b,c,d,file):
 	pid = dal.upload_image(file)
+
 
 
 

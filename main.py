@@ -10,6 +10,7 @@ from Models.Entities.user import user
 from Models.Entities.couple import couple
 from Models.Entities.photo import photo
 
+
 class DBTool(cherrypy.Tool):
 	def __init__(self):
 		cherrypy.Tool.__init__(self,'on_start_resource',self.bind,priority=20)
@@ -48,6 +49,7 @@ class Controller(object):
 	def index(self):
 		unread_count = None
 		login = False
+		be_together_days = None
 		if hasattr(cherrypy.request,'user'):
 			unread_count = bll.unread_letters_count(cherrypy.request.user)
 			be_together_days = bll.be_together_days(cherrypy.request.user)
@@ -181,22 +183,47 @@ class Controller(object):
 	@cherrypy.expose
 	@cherrypy.tools.auth(path='/gifts_first')
 	def gifts_first(self):
-#		data = bll.
-		return view.gifts_chain(data)
+		data = bll.previous_gifts(cherrypy.request.user)
+		return view.gifts_chain_view(data)
 
 
 
 
 	@cherrypy.expose
 	@cherrypy.tools.auth(path='/')
+	def gifts_second(self,myFile,description,year,month,day,who):
+		date = datetime.datetime(int(year),int(month),int(day))
+		bll.new_gift(cherrypy.request.user,myFile,description,date,who)
+		raise cherrypy.HTTPRedirect('/gifts_first')
+
+
+
+
+
 	def gifts_second(self):
 		pass
 	
 	@cherrypy.expose
 	@cherrypy.tools.auth(path='/')
+<<<<<<< HEAD
 	def photo_library(self,page=0):
 		ids = bll.photos(cherrypy.request.user,page*10,10)
 		return view.photo_library(ids)
+=======
+	def testupload(self):
+		return """
+        <html><body>
+            <h2>Upload a file</h2>
+            <form action="/upload_photo" method="post" enctype="multipart/form-data">
+            filename: <input type="file" name="photo" /><br />
+            <input type="submit" />
+            </form>
+            <h2>Download a file</h2>
+            <a href='download'>This one</a>
+        </body></html>
+        """
+
+>>>>>>> origin/master
 	@cherrypy.expose
 	@cherrypy.tools.auth(path='/')
 	def photo(self,id,height=None,width=None):
@@ -213,6 +240,51 @@ class Controller(object):
 	def upload_photo(self,photo):
 		i = dal.uploadImage(cherrypy.request.user,photo)
 		raise cherrypy.HTTPRedirect('/photo_library'.format(i))
+
+
+
+	@cherrypy.expose
+	@cherrypy.tools.auth(path='diary')
+	def diary_first(self):
+		return view.diary_view()
+
+
+
+	@cherrypy.expose
+	@cherrypy.tools.auth(path='/')
+	def diary_second(self,content,permission=None,year=None,month=None,day=None):
+		if year and month and day and permission:
+			year = string.atoi(year)
+			month = string.atoi(month)
+			day = string.atoi(day)
+			permission = permission
+		else:
+			now = datetime.datetime.now()
+			year = now.year
+			month = now.month
+			day = now.day
+			permission = None
+		time = datetime.datetime(int(year),int(month),int(day))
+		bll.new_diary(cherrypy.request.user,time,content,permission)
+		raise cherrypy.HTTPRedirect('/')
+
+
+	@cherrypy.expose
+	@cherrypy.tools.auth(path='/diary_previous_peer')
+	def diary_previous_peer(self):
+		data = bll.previous_diary_peer(cherrypy.request.user)
+		return view.previous_diary_peer(data)
+
+
+
+	@cherrypy.expose
+	@cherrypy.tools.auth(path='/diary_previous_me')
+	def diary_previous_me(self):
+		data = bll.previous_diary_me(cherrypy.request.user)
+		return view.previous_diary_me(data)
+
+
+
 
 
 conf = {

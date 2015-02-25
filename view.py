@@ -161,9 +161,9 @@ def letters_write_view():
 	return u"""<html><body>
 					<form action="/letters_write_second" method="post">
 						你可以在这里设置让TA看的时间哦
-						<input type="text" name="begin_time" placeholder="起始时间"><br />
+						<input type="text" name="begin_time" placeholder="起始时间"><br/>
 						<input type="text" name="end_time" placeholder="截止时间">
-						<input type="textarea" name="new_letter" placeholder="给TA写点什么吧~">
+						<textarea name="new_letter" placeholder="给TA写点什么吧~"><textarea><br/>
 						<input type="submit" value="写完啦">
 					</form>
 				</body></html>
@@ -240,7 +240,7 @@ def calendar_view(data,data_couple,year,month):
 			}
 		</script>
 
-		<div id="pop" hidden="true" style="position:absolute;width:30%; height:30%; top:20%; left:35%; background:cyan" onclick="document.getElementById('pop').hidden=false">
+		<div id="pop" hidden="true" style="position:absolute;width:30%; height:30%; top:20%; left:35%; background:cyan">
 			<div id="content"></div>
 			<form action="/calendar_second" method="post">
 			起始时间<input id='st' type ="text" name = "begin_time"/><br/>
@@ -297,25 +297,48 @@ def calendar_view(data,data_couple,year,month):
 	"""
 	return s
 
-def gifts_chain(data):
-	s = u"""
-		  <html><body>
-		  <form action="/gifts_second" method="post" enctype="multipart/form-data">
-		  filename: <input type="file" name="myFile"/><br/>
-		  <input type="textarea" name="description"/>
 
-		  <input type="text" name="year" placeholder="2015"/>年
-		  <input type="text" name="month" placeholder="2"/>月
-		  <input type="text" name="day" placeholder="14"/>日<br/>
-		  
-		  TA送我的<input type="radio" name="who" value="TA"/><br/>
-		  我送TA的<input type="radio" name="who" value="ME"/><br/>
-		     
-          <input type="submit"/>
-            
-		  </form>
+
+def gifts_chain(data):
+
+	s = u"""
+		<html><body>
+		<div onclick="document.getElementById('new_gift').hidden=false" style="position:absolute;left:45%;">添加礼物</div>
+		<div id="new_gift" hidden="true" style="position:absolute;width:50%; height:50%; top:10%; left:20%; background:#FFE4C4">
+			  <form action="/gifts_second" method="post" enctype="multipart/form-data">
+			  filename: <input type="file" name="myFile"/><br/>
+						<input type="textarea" name="description" placeholder="描述一下呗"/><br/>
+
+						<input type="text" name="year" placeholder="2015"/>年
+						<input type="text" name="month" placeholder="2"/>月
+						<input type="text" name="day" placeholder="14"/>日<br/>
+			  
+			  TA送我的<input type="radio" name="who" value="TA"/><br/>
+			  我送TA的<input type="radio" name="who" value="ME"/><br/>
+			     
+	          <input type="submit"/>
+	            
+			  </form>
+		</div>
 
 	"""
+	boy ="<div style=\"position:absolute;left:10%\">"
+	girl ="<div style=\"position:absolute;left:80%\">"
+	time_line ="<div style=\"position:absolute;left:50%\">"
+	for a in data:
+		time_line += "<div>"+a[6]+"</div>"
+		if a[0] == 1:
+			boy += "<div>"+"<img src=\"photos?id={0}\"/>".format(a[2])
+			boy += "<div>"+a[3]+"</div>"
+			boy += "</div>"
+		else:
+			girl += "<div>"+"<img src=\"photos?id={0}\"/>".format(a[2])
+			girl += "<div>"+a[3]+"</div>"
+			girl += "</div>"
+	boy += "</div>"
+	girl += "</div>"
+	time_line += "</div>"
+	s += boy+girl+time_line
 	s += u"""
 	      </body></html>
 	"""
@@ -333,6 +356,75 @@ def photo_library(ids):
 	</body></html>
 	"""
 	return s
+
+
+
+def diary_view():
+	now = datetime.datetime.now()
+	year = now.year
+	month = now.month
+	day = now.day
+	s =u"""
+	<html><body>
+	<a href="/diary_previous_peer" style="position:absolute;top:10%" value="TA的日记" ></a>
+	<a href="/diary_previous_me" style="position:absolute;top:10%" value="以前的日记"/></a>
+	<div style="position:absolute;left:30%">
+		<form action="diary_second" method="post">
+			<input name="year" type="text" placeholder="{0}">
+			<input name="month" type="text" placeholder="{1}">
+			<input name="day" type="text" placeholder="{2}"><br/>
+
+			<textarea name="content" style="width:500px;height:500px"></textarea><br/>
+			
+			TA不可以看<input name="permission" type="checkbox" value="False">
+			<input type="submit" value="写好了">
+		</form>
+	</div>
+
+	""".format(year,month,day)
+	s += """</body></html>"""
+	return s
+
+
+def previous_diary_peer(data):
+	s ="""
+	<html><body>
+	"""
+	for a in data:
+		s += "<div>"+str(a[0])+"</div>"
+		s += "<div>"+a[1]+"</div>"
+	s +="""
+	</body></html>
+	"""
+	return s
+
+
+
+def previous_diary_me(data):
+	s ="""
+	<html><body>
+	"""
+	for a in data:
+		s += "<div>"+str(a[0])+"</div>"
+		s += "<div>"+a[1]+"</div>"
+		if a[2]==1:
+			s += "<div>"+u"TA可以看"+"</div>"
+		else:
+			s += "<div>"+u"私密日记"+"</div>"
+	s +="""
+	</body></html>
+	"""
+	return s
+
+
+
+
+
+
+
+
+
+
 
 def index_view(now,unread_count,login,days):
 	s = u"""
