@@ -184,7 +184,7 @@ class Controller(object):
 	@cherrypy.tools.auth(path='/gifts_first')
 	def gifts_first(self):
 		data = bll.previous_gifts(cherrypy.request.user)
-		return view.gifts_chain_view(data)
+		return view.gifts_chain(data)
 
 
 
@@ -230,7 +230,7 @@ class Controller(object):
 	@cherrypy.expose
 	@cherrypy.tools.auth(path='/')
 	def upload_photo(self,photo):
-		i = dal.uploadImage(cherrypy.request.user,photo)
+		i = dal.upload_image(cherrypy.request.user,photo)
 		raise cherrypy.HTTPRedirect('/photo_library'.format(i))
 
 
@@ -283,6 +283,15 @@ conf = {
 	'/': {
 		'tools.sessions.on': True,
 		'tools.db.on': True
+	},
+	'/static' :{
+		'tools.staticdir.on': True,
+		'tools.staticdir.dir': '/Users/administrator/Documents/we two/Tulips/static'
+	},
+	'/favicon.ico' : {
+		'tools.staticfile.on': True,
+		'tools.staticfile.filename': '/Users/administrator/Documents/we two/Tulips/static/favicon.ico'
 	}
+
 }
 cherrypy.quickstart(Controller(),'/',conf)

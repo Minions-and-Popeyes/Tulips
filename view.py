@@ -2,9 +2,10 @@
 import datetime
 def signup_view():
 	return u"""<html>
+	<head><link rel="stylesheet" href="/static/css/bootstrap.css" type="text/css" /></head>
 				<body>
 		        <form action="/signup_second" method="post">
-		        	<input type="text" name="boy_name" placeholder="姓名"/>
+		        	<input class="" type="text" name="boy_name" placeholder="姓名"/>
 		        	<input type="text" name="boy_address" placeholder="邮箱"/>
 		        	<input type="password" name="boy_password" placeholder="密码"/>
 
@@ -326,14 +327,15 @@ def gifts_chain(data):
 	girl ="<div style=\"position:absolute;left:80%\">"
 	time_line ="<div style=\"position:absolute;left:50%\">"
 	for a in data:
-		time_line += "<div>"+a[6]+"</div>"
+		print a[3]
+		time_line += "<div>"+str(a[6])+"</div>"
 		if a[0] == 1:
-			boy += "<div>"+"<img src=\"photos?id={0}\"/>".format(a[2])
-			boy += "<div>"+a[3]+"</div>"
+			boy += "<div>"+"<img src=\"/photo?id={0}&height=30&width=20\"/>".format(a[2])
+			boy += u"<div>"+a[3]+"</div>"
 			boy += "</div>"
 		else:
-			girl += "<div>"+"<img src=\"photos?id={0}\"/>".format(a[2])
-			girl += "<div>"+a[3]+"</div>"
+			girl += "<div>"+"<img src=\"photo?id={0}&height=30&width=20\"/>".format(a[2])
+			girl += u"<div>"+a[3]+"</div>"
 			girl += "</div>"
 	boy += "</div>"
 	girl += "</div>"

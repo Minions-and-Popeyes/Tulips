@@ -46,7 +46,7 @@ def affairs_in_range(user_id,peer,begin_time,end_time):
 	cur.execute("SELECT * from calendar WHERE (user=%s or user=%s)and begin_time>=%s and begin_time<%s",(user_id,peer,begin_time,end_time))
 	return cur.fetchall()
 
-def uploadImage(u,photo_file):
+def upload_image(u,photo_file):
 	im = Image.open(photo_file.file)
 	buf = StringIO()
 	im.save(buf,'PNG')

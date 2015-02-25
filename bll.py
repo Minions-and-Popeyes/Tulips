@@ -130,13 +130,13 @@ def be_together_days(u):
 
 
 def new_gift(u,myFile,description,date,who):
-	pid = dal.uploadImage(u,myFile)
+	pid = dal.upload_image(u,myFile)
 	c = couple.byuserid(u.id)
 	if c.boy==u.id:
 		peer = c.girl
 	else:
 		peer = c.boy
-	if who==TA:
+	if who=='TA':
 		g = gifts(None,pid,description,peer,u.id,date)
 	else:
 		g = gifts(None,pid,description,u.id,peer,date)
@@ -188,12 +188,6 @@ def image_string_content(u,photo_id,width=None,height=None):
 		im.save(newcontent,'PNG')
 		p.content = newcontent.getvalue()
 	return str(p.content)
-
-def new_gift(a,b,c,d,file):
-	pid = dal.upload_image(file)
-
-
-
 
 
 
