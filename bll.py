@@ -14,13 +14,10 @@ from PIL import Image
 from StringIO import StringIO
 
 
-<<<<<<< HEAD
 def photos(u,skip,top):
 	c = couple.byuserid(u.id)
 	return dal.couple_photos_id(c.boy,c.girl,skip,top)
-	
-=======
->>>>>>> origin/master
+
 def signup(boy_name,boy_address,boy_password,girl_name,girl_address,girl_password):
 	boy = user(None,boy_name,boy_address,boy_password,1)
 	boy.save()

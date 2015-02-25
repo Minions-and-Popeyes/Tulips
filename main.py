@@ -196,20 +196,13 @@ class Controller(object):
 		bll.new_gift(cherrypy.request.user,myFile,description,date,who)
 		raise cherrypy.HTTPRedirect('/gifts_first')
 
-
-
-
-
-	def gifts_second(self):
-		pass
 	
 	@cherrypy.expose
 	@cherrypy.tools.auth(path='/')
-<<<<<<< HEAD
 	def photo_library(self,page=0):
 		ids = bll.photos(cherrypy.request.user,page*10,10)
 		return view.photo_library(ids)
-=======
+
 	def testupload(self):
 		return """
         <html><body>
@@ -223,7 +216,6 @@ class Controller(object):
         </body></html>
         """
 
->>>>>>> origin/master
 	@cherrypy.expose
 	@cherrypy.tools.auth(path='/')
 	def photo(self,id,height=None,width=None):
