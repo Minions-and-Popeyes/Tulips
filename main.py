@@ -276,8 +276,8 @@ class Controller(object):
 		return view.previous_diary_me(data)
 
 
-
-
+import os
+cwd = os.getcwd()
 
 conf = {
 	'/': {
@@ -286,11 +286,13 @@ conf = {
 	},
 	'/static' :{
 		'tools.staticdir.on': True,
-		'tools.staticdir.dir': '/Users/administrator/Documents/we two/Tulips/static'
+		'tools.staticdir.dir': '{0}/static'.format(cwd),
+		'tools.db.on': False
 	},
 	'/favicon.ico' : {
 		'tools.staticfile.on': True,
-		'tools.staticfile.filename': '/Users/administrator/Documents/we two/Tulips/static/favicon.ico'
+		'tools.staticfile.filename': '{0}/static/favicon.ico'.format(cwd),
+		'tools.db.on': False
 	}
 
 }

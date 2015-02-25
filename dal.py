@@ -47,12 +47,15 @@ def affairs_in_range(user_id,peer,begin_time,end_time):
 	return cur.fetchall()
 
 def upload_image(u,photo_file):
+	print 'In dal'
 	im = Image.open(photo_file.file)
 	buf = StringIO()
 	im.save(buf,'PNG')
 	tm = datetime.datetime.now()
 	p = photo(None,buf.getvalue(),u.id,tm)
+	print 'Inserting'
 	p.save()
+	print 'Done'
 	return p.id
 
 
