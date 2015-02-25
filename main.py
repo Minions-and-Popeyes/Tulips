@@ -194,22 +194,17 @@ class Controller(object):
 	
 	@cherrypy.expose
 	@cherrypy.tools.auth(path='/')
-	def testupload(self):
-		return """
-        <html><body>
-            <h2>Upload a file</h2>
-            <form action="/upload_photo" method="post" enctype="multipart/form-data">
-            filename: <input type="file" name="photo" /><br />
-            <input type="submit" />
-            </form>
-            <h2>Download a file</h2>
-            <a href='download'>This one</a>
-        </body></html>
-        """
+	def photo_library(self,page=0):
+		ids = bll.photos(cherrypy.request.user,page*10,10)
+		return view.photo_library(ids)
 	@cherrypy.expose
 	@cherrypy.tools.auth(path='/')
-	def photo(self,id):
-		content = bll.image_string_content(cherrypy.request.user,id)
+	def photo(self,id,height=None,width=None):
+		if height:
+			height = int(height)
+		if width:
+			width = int(width)
+		content = bll.image_string_content(cherrypy.request.user,id,width,height)
 		cherrypy.response.headers['Content-Type']='image/png'
 		return content
 
@@ -217,7 +212,7 @@ class Controller(object):
 	@cherrypy.tools.auth(path='/')
 	def upload_photo(self,photo):
 		i = dal.uploadImage(cherrypy.request.user,photo)
-		raise cherrypy.HTTPRedirect('/photo?id={0}'.format(i))
+		raise cherrypy.HTTPRedirect('/photo_library'.format(i))
 
 
 conf = {

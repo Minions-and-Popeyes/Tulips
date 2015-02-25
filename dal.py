@@ -2,7 +2,13 @@ import cherrypy
 from PIL import Image
 from StringIO import StringIO
 from Models.Entities.photo import photo
+import datetime
 
+
+def couple_photos_id(boy,girl,skip,top):
+	cur = cherrypy.request.cur
+	cur.execute("SELECT id from photo where user=%s or user=%s ORDER BY time desc limit %s,%s",(boy,girl,skip,top))
+	return [item[0] for item in cur.fetchall()]
 def lovebook_items(id1,id2,begin_time,stop_time):
 	cur = cherrypy.request.cur
 	cur.execute("SELECT * from lovebook WHERE (user=%s or user=%s) and time>=%s and time<=%s  ORDER BY time desc",(id1,id2,begin_time,stop_time))
@@ -44,7 +50,8 @@ def uploadImage(u,photo_file):
 	im = Image.open(photo_file.file)
 	buf = StringIO()
 	im.save(buf,'PNG')
-	p = photo(None,buf.getvalue(),u.id)
+	tm = datetime.datetime.now()
+	p = photo(None,buf.getvalue(),u.id,tm)
 	p.save()
 	return p.id
 

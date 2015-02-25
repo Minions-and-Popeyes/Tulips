@@ -70,8 +70,8 @@ def lovebook_view(data,together_date):
 			            };  
 			} 
 			function doMouseDown(event) {  
-			    var x = event.pageX;  
-			    var y = event.pageY;  
+			    var x = event.clientX;  
+			    var y = event.clientY;  
 			    var canvas = event.target;  
 			    var loc = getPointOnCanvas(canvas, x, y);  
 			    console.log("mouse down at point( x:" + loc.x + ", y:" + loc.y + ")");  
@@ -81,8 +81,8 @@ def lovebook_view(data,together_date):
 			}  
 			  
 			function doMouseMove(event) {  
-			    var x = event.pageX;  
-			    var y = event.pageY;  
+			    var x = event.clientX;  
+			    var y = event.clientY;  
 			    var canvas = event.target;  
 			    var loc = getPointOnCanvas(canvas, x, y);  
 			    if (started) {  
@@ -102,8 +102,7 @@ def lovebook_view(data,together_date):
 			function submit() {
 				xmlhttp = new XMLHttpRequest()
 				xmlhttp.onreadystatechange = function () {
-					if(xmlhttp.readystate==4 && xmlhttp.status==200){
-						alter('添加Love Book成功')
+					if(xmlhttp.readyState==4 && xmlhttp.status==200){
 						location.reload()
 					}
 				}
@@ -322,6 +321,18 @@ def gifts_chain(data):
 	"""
 	return s
 
+def photo_library(ids):
+	s='<html><body>'
+	for id in ids:
+		s+='<a href="/photo?id={0}"><img src="/photo?id={0}&height=200&width=200" /></a>'.format(id)
+	s+="""
+	<form action="/upload_photo" method="post" enctype="multipart/form-data" >
+		<input type="file" name="photo" />
+		<input type="submit" />
+	</form>
+	</body></html>
+	"""
+	return s
 
 def index_view(now,unread_count,login,days):
 	s = u"""
